@@ -1,16 +1,19 @@
 {
-  "name": "@uniswap/sdk",
+  "name": "@materia-dex/sdk",
   "license": "MIT",
-  "version": "3.0.3",
-  "description": "🛠 An SDK for building applications on top of Uniswap.",
+  "version": "1.0.1",
+  "description": "An SDK for building applications on top of Materia.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/Uniswap/uniswap-sdk.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/materia-dex/materia-sdk.git"
+  },
   "keywords": [
-    "uniswap",
+    "materia",
     "ethereum"
   ],
   "module": "dist/sdk.esm.js",
@@ -22,7 +25,8 @@
     "prepublishOnly": "tsdx build"
   },
   "dependencies": {
-    "@uniswap/v2-core": "^1.0.0",
+    "@materia-dex/materia-contracts-core": "^1.0.1",
+    "@materia-dex/materia-contracts-proxy": "^1.0.0",
     "big.js": "^5.2.2",
     "decimal.js-light": "^2.5.0",
     "jsbi": "^3.1.1",
@@ -55,5 +59,13 @@
     "printWidth": 120,
     "semi": false,
     "singleQuote": true
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/materia-dex/materia-sdk/issues"
+  },
+  "homepage": "https://github.com/materia-dex/materia-sdk#readme",
+  "directories": {
+    "test": "test"
+  },
+  "author": "materia"
 }
