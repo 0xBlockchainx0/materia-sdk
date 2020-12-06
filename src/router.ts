@@ -91,6 +91,21 @@ export abstract class Router {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
+    /**
+     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
+     *
+     * Emits a {TransferSingle} event.
+     *
+     * Requirements:
+     *
+     * - `to` cannot be the zero address.
+     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
+     * - `from` must have a balance of tokens of type `id` of at least `amount`.
+     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
+     * acceptance magic value.
+     */
+    //function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external;
+    
     let methodName: string
     let args: (string | string[])[]
     let value: string
