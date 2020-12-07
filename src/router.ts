@@ -1,7 +1,22 @@
-import { TradeType } from './constants'
+import {
+  PROXY_ADDRESS,
+  SWAP_ACTION_EXACT_TOKENS_FOR_ETH,
+  SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
+  SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS_UNWRAP,
+  SWAP_ACTION_EXACT_TOKENS_FOR_ETH_UNWRAP,
+  SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS,
+  SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
+  SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS_UNWRAP,
+  SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_UNWRAP, SWAP_ACTION_TOKENS_FOR_EXACT_ETH,
+  SWAP_ACTION_TOKENS_FOR_EXACT_ETH_UNWRAP,
+  SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS,
+  SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS_UNWRAP,
+  TradeType
+} from './constants'
 import invariant from 'tiny-invariant'
 import { validateAndParseAddress } from './utils'
 import { CurrencyAmount, ETHER, Percent, Trade } from './entities'
+import Web3 from 'web3'
 
 /**
  * Options for producing the arguments to send call to the router.
@@ -67,13 +82,16 @@ export abstract class Router {
   /**
    * Cannot be constructed.
    */
-  private constructor() {}
+  private constructor() { }
   /**
    * Produces the on-chain method name to call and the hex encoded parameters to pass as arguments for a given trade.
    * @param trade to produce call parameters for
    * @param options options for the call parameters
+   * @param isEthItem flag for check if is EthItem
+   * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline): SwapParameters {
+  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, needUnwrap: boolean): SwapParameters {
+    const web3 = new Web3();
     const etherIn = trade.inputAmount.currency === ETHER
     const etherOut = trade.outputAmount.currency === ETHER
     // the router does not support both ether in and out
@@ -91,65 +109,108 @@ export abstract class Router {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    /**
-     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
-     *
-     * Emits a {TransferSingle} event.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
-     * - `from` must have a balance of tokens of type `id` of at least `amount`.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-     * acceptance magic value.
-     */
-    //function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external;
-    
     let methodName: string
-    let args: (string | string[])[]
+    let args: (any | any[])[]
     let value: string
-    switch (trade.tradeType) {
-      case TradeType.EXACT_INPUT:
-        if (etherIn) {
-          methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
-          // (uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountOut, path, to, deadline]
-          value = amountIn
-        } else if (etherOut) {
-          methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
+
+    if (isEthItem) {
+      // (address from, address to, uint256 id, uint256 amount, bytes calldata data)
+      methodName = 'safeTransferFrom'
+
+      let operation: number
+      let ethItemArgs: (any | any[])
+
+      switch (trade.tradeType) {
+        case TradeType.EXACT_INPUT:
+          if (etherOut) {
+            operation = useFeeOnTransfer
+              ? (needUnwrap ? SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS_UNWRAP : SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS)
+              : (needUnwrap ? SWAP_ACTION_EXACT_TOKENS_FOR_ETH_UNWRAP : SWAP_ACTION_EXACT_TOKENS_FOR_ETH)
+          } else {
+            operation = useFeeOnTransfer
+              ? (needUnwrap ? SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS_UNWRAP : SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS)
+              : (needUnwrap ? SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_UNWRAP : SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS)
+          }
+
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
+          ethItemArgs = web3.eth.abi.encodeParameter(
+            ["uint256", "bytes"],
+            [operation, web3.eth.abi.encodeParameters(
+              ["uint", "uint", "address[]", "address", "uint"],
+              [amountIn, amountOut, path, to, deadline]
+            )]
+          )
+          args = [to, PROXY_ADDRESS, 0 /* id */, amountIn, ethItemArgs]
           value = ZERO_HEX
-        } else {
-          methodName = useFeeOnTransfer
-            ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactTokensForTokens'
-          // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
-          value = ZERO_HEX
-        }
-        break
-      case TradeType.EXACT_OUTPUT:
-        invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
-        if (etherIn) {
-          methodName = 'swapETHForExactTokens'
-          // (uint amountOut, address[] calldata path, address to, uint deadline)
-          args = [amountOut, path, to, deadline]
-          value = amountIn
-        } else if (etherOut) {
-          methodName = 'swapTokensForExactETH'
+
+          break
+        case TradeType.EXACT_OUTPUT:
+          invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
+
+          if (etherOut) {
+            operation = (needUnwrap ? SWAP_ACTION_TOKENS_FOR_EXACT_ETH_UNWRAP : SWAP_ACTION_TOKENS_FOR_EXACT_ETH)
+          } else {
+            operation = (needUnwrap ? SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS_UNWRAP : SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS)
+          }
+
           // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, path, to, deadline]
+          ethItemArgs = web3.eth.abi.encodeParameter(
+            ["uint256", "bytes"],
+            [operation, web3.eth.abi.encodeParameters(
+              ["uint", "uint", "address[]", "address", "uint"],
+              [amountOut, amountIn, path, to, deadline]
+            )]
+          )
+          args = [to, PROXY_ADDRESS, 0 /* id */, amountIn, ethItemArgs]
           value = ZERO_HEX
-        } else {
-          methodName = 'swapTokensForExactTokens'
-          // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, path, to, deadline]
-          value = ZERO_HEX
-        }
-        break
+
+          break
+      }
     }
+    else {
+      switch (trade.tradeType) {
+        case TradeType.EXACT_INPUT:
+          if (etherIn) {
+            methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
+            // (uint amountOutMin, address[] calldata path, address to, uint deadline)
+            args = [amountOut, path, to, deadline]
+            value = amountIn
+          } else if (etherOut) {
+            methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
+            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+            args = [amountIn, amountOut, path, to, deadline]
+            value = ZERO_HEX
+          } else {
+            methodName = useFeeOnTransfer
+              ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+              : 'swapExactTokensForTokens'
+            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+            args = [amountIn, amountOut, path, to, deadline]
+            value = ZERO_HEX
+          }
+          break
+        case TradeType.EXACT_OUTPUT:
+          invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
+          if (etherIn) {
+            methodName = 'swapETHForExactTokens'
+            // (uint amountOut, address[] calldata path, address to, uint deadline)
+            args = [amountOut, path, to, deadline]
+            value = amountIn
+          } else if (etherOut) {
+            methodName = 'swapTokensForExactETH'
+            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+            args = [amountOut, amountIn, path, to, deadline]
+            value = ZERO_HEX
+          } else {
+            methodName = 'swapTokensForExactTokens'
+            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+            args = [amountOut, amountIn, path, to, deadline]
+            value = ZERO_HEX
+          }
+          break
+      }
+    }
+
     return {
       methodName,
       args,

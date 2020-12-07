@@ -58,6 +58,8 @@ export declare abstract class Router {
      * Produces the on-chain method name to call and the hex encoded parameters to pass as arguments for a given trade.
      * @param trade to produce call parameters for
      * @param options options for the call parameters
+     * @param isEthItem flag for check if is EthItem
+     * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
      */
-    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline): SwapParameters;
+    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, needUnwrap: boolean): SwapParameters;
 }

@@ -1384,10 +1384,12 @@ var Router = /*#__PURE__*/function () {
    * Produces the on-chain method name to call and the hex encoded parameters to pass as arguments for a given trade.
    * @param trade to produce call parameters for
    * @param options options for the call parameters
+   * @param isEthItem flag for check if is EthItem
+   * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
    */
 
 
-  Router.swapCallParameters = function swapCallParameters(trade, options) {
+  Router.swapCallParameters = function swapCallParameters(trade, options, isEthItem, needUnwrap) {
     var etherIn = trade.inputAmount.currency === ETHER;
     var etherOut = trade.outputAmount.currency === ETHER; // the router does not support both ether in and out
 
@@ -1401,6 +1403,21 @@ var Router = /*#__PURE__*/function () {
     });
     var deadline = 'ttl' in options ? "0x" + (Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16) : "0x" + options.deadline.toString(16);
     var useFeeOnTransfer = Boolean(options.feeOnTransfer);
+    /**
+     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
+     *
+     * Emits a {TransferSingle} event.
+     *
+     * Requirements:
+     *
+     * - `to` cannot be the zero address.
+     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
+     * - `from` must have a balance of tokens of type `id` of at least `amount`.
+     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
+     * acceptance magic value.
+     */
+    //function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external;
+
     var methodName;
     var args;
     var value;
