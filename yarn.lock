@@ -1378,17 +1378,16 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@materia-dex/materia-contracts-core@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-core/-/materia-contracts-core-1.0.3.tgz#204556ae590c2df81b23b70081a74562cdf9ccdd"
-  integrity sha512-OIZ9/fqSDTSxX9ghIGMPw1xfl8qwONBStDQZeyT2o5dQQhT1rIiokpHl1ucpQRnNetHHwoNSfdFgsMKgS+nbZQ==
+"@materia-dex/materia-contracts-core@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-core/-/materia-contracts-core-1.0.5.tgz#c8e583020cfc0c8f174775fcc6d219258b2e66bc"
+  integrity sha512-DsL/xiXG9qwd5cBOF5R1juf1VM+YbFc7JxZOcdlObdeLGshM1zQ9EMmIpBAK6Jg/vLJsfmNESP8o8hU/3RfSAA==
 
-"@materia-dex/materia-contracts-proxy@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-proxy/-/materia-contracts-proxy-1.0.4.tgz#8f156096f78db787d22ce063863ad13be354df86"
-  integrity sha512-bewNqlnZu3eJG4T/4iwZ7JTn0dQK4LvbAtz207XK47xOgk3xWqEKjj1XgHQ+8++MFaVOyoDSJzBL5+yyy59fOQ==
+"@materia-dex/materia-contracts-proxy@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-proxy/-/materia-contracts-proxy-1.0.6.tgz#b933ae71b42e78a5c2283750147ccdc15ee3b9a2"
+  integrity sha512-8rzx7J0CtTqtbR+9HKCyMtllvEqugalSi7mKqead30Xcb2XCWPu/Zno1r+jXz8kx6uykHYdyJjvZgE0L4uC9ZQ==
   dependencies:
-    "@materia-dex/materia-contracts-core" "^1.0.3"
     abstract-leveldown "^5.0.0"
     accepts "^1.3.7"
     aes-js "^3.0.0"
@@ -4492,9 +4491,9 @@ ee-first@1.1.1, ee-first@^1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.580:
-  version "1.3.616"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.616.tgz#de63d1c79bb8eb61168774df0c11c9e1af69f9e8"
-  integrity sha512-CI8L38UN2BEnqXw3/oRIQTmde0LiSeqWSRlPA42ZTYgJQ8fYenzAM2Z3ni+jtILTcrs5aiXZCGJ96Pm+3/yGyQ==
+  version "1.3.620"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.620.tgz#c6f36a7e398acc9d7d12743a6f58d536fbc58700"
+  integrity sha512-YbgWXUR2Mu+Fp6rm3GZ5YJdNo8SgZKLUTNSl2PNvdOcM8OIz07jRJnRkIaV9vdszFv9UUuGChh19w9qSuoLJgw==
 
 electron-to-chromium@^1.3.488:
   version "1.3.509"
@@ -11366,7 +11365,7 @@ web3@1.2.11:
     web3-shh "1.2.11"
     web3-utils "1.2.11"
 
-web3@^1.2.11:
+web3@^1.2.11, web3@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/web3/-/web3-1.3.0.tgz#8fe4cd6e2a21c91904f343ba75717ee4c76bb349"
   integrity sha512-4q9dna0RecnrlgD/bD1C5S+81Untbd6Z/TBD7rb+D5Bvvc0Wxjr4OP70x+LlnwuRDjDtzBwJbNUblh2grlVArw==
@@ -11384,10 +11383,22 @@ webidl-conversions@^4.0.2:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
   integrity sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==
 
-websocket@1.0.32, websocket@^1.0.31, websocket@^1.0.32:
+websocket@1.0.32, websocket@^1.0.32:
   version "1.0.32"
   resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.32.tgz#1f16ddab3a21a2d929dec1687ab21cfdc6d3dbb1"
   integrity sha512-i4yhcllSP4wrpoPMU2N0TQ/q0O94LRG/eUQjEAamRltjQ1oT1PFFKOG4i877OlJgCG8rw6LrrowJp+TYCEWF7Q==
+  dependencies:
+    bufferutil "^4.0.1"
+    debug "^2.2.0"
+    es5-ext "^0.10.50"
+    typedarray-to-buffer "^3.1.5"
+    utf-8-validate "^5.0.2"
+    yaeti "^0.0.6"
+
+websocket@^1.0.31:
+  version "1.0.33"
+  resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.33.tgz#407f763fc58e74a3fa41ca3ae5d78d3f5e3b82a5"
+  integrity sha512-XwNqM2rN5eh3G2CUQE3OHZj+0xfdH42+OFK6LdC2yqiC0YU8e5UK0nYre220T0IyyN031V/XOvtHvXozvJYFWA==
   dependencies:
     bufferutil "^4.0.1"
     debug "^2.2.0"

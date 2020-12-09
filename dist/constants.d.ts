@@ -16,8 +16,9 @@ export declare enum Rounding {
     ROUND_HALF_UP = 1,
     ROUND_UP = 2
 }
-export declare const FACTORY_ADDRESS = "0xbdd7c37334c565c97ee992c459b4f6d89fad6b2d";
-export declare const INIT_CODE_HASH = "0xc24719c58ea1a5f96299c52b3006cc2e537e3a5dce54173a9c92d41b74beb651";
+export declare const PROXY_ADDRESS = "0xb19f100c3c02ac469874c8c3a1038c7007950d81";
+export declare const FACTORY_ADDRESS = "0x902e7cdDB4821c30B4A8FD7F8FDF62c439AA0657";
+export declare const INIT_CODE_HASH = "0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68";
 export declare const MINIMUM_LIQUIDITY: JSBI;
 export declare const ZERO: JSBI;
 export declare const ONE: JSBI;
@@ -36,3 +37,9 @@ export declare const SOLIDITY_TYPE_MAXIMA: {
     uint8: JSBI;
     uint256: JSBI;
 };
+export declare const SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 1;
+export declare const SWAP_ACTION_EXACT_TOKENS_FOR_ETH = 2;
+export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 3;
+export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS = 4;
+export declare const SWAP_ACTION_TOKENS_FOR_EXACT_ETH = 5;
+export declare const SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = 6;
