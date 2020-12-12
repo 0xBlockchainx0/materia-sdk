@@ -1378,15 +1378,15 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@materia-dex/materia-contracts-core@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-core/-/materia-contracts-core-1.0.5.tgz#c8e583020cfc0c8f174775fcc6d219258b2e66bc"
-  integrity sha512-DsL/xiXG9qwd5cBOF5R1juf1VM+YbFc7JxZOcdlObdeLGshM1zQ9EMmIpBAK6Jg/vLJsfmNESP8o8hU/3RfSAA==
+"@materia-dex/materia-contracts-core@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-core/-/materia-contracts-core-1.0.7.tgz#8b7cca1315c47ffc6083a3ee8b00df13f2a083af"
+  integrity sha512-flOk+ylw/LX3oNexpSd9ER4U+xdhDjLg67vhyvWRNnGW/XhNaMxibN6wVpXqZWTMxwclwCcgWiOcsJeIXmskJA==
 
-"@materia-dex/materia-contracts-proxy@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-proxy/-/materia-contracts-proxy-1.0.6.tgz#b933ae71b42e78a5c2283750147ccdc15ee3b9a2"
-  integrity sha512-8rzx7J0CtTqtbR+9HKCyMtllvEqugalSi7mKqead30Xcb2XCWPu/Zno1r+jXz8kx6uykHYdyJjvZgE0L4uC9ZQ==
+"@materia-dex/materia-contracts-proxy@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-proxy/-/materia-contracts-proxy-1.0.8.tgz#9cc4972fe1f72c015875c91a61e667cd0121bc66"
+  integrity sha512-RDgMj1tL99rx415K8WRdEWnS81eYZvLIGRvNh4cpwLevyQq6AnByjEpP5kBmVnqLHD5wyhpncuh+DNDVAJAkgA==
   dependencies:
     abstract-leveldown "^5.0.0"
     accepts "^1.3.7"
@@ -4491,9 +4491,9 @@ ee-first@1.1.1, ee-first@^1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.580:
-  version "1.3.620"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.620.tgz#c6f36a7e398acc9d7d12743a6f58d536fbc58700"
-  integrity sha512-YbgWXUR2Mu+Fp6rm3GZ5YJdNo8SgZKLUTNSl2PNvdOcM8OIz07jRJnRkIaV9vdszFv9UUuGChh19w9qSuoLJgw==
+  version "1.3.622"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.622.tgz#9726bd2e67a5462154750ce9701ca6af07d07877"
+  integrity sha512-AJT0Fm1W0uZlMVVkkJrcCVvczDuF8tPm3bwzQf5WO8AaASB2hwTRP7B8pU5rqjireH+ib6am8+hH5/QkXzzYKw==
 
 electron-to-chromium@^1.3.488:
   version "1.3.509"

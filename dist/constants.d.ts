@@ -16,7 +16,7 @@ export declare enum Rounding {
     ROUND_HALF_UP = 1,
     ROUND_UP = 2
 }
-export declare const PROXY_ADDRESS = "0xb19f100c3c02ac469874c8c3a1038c7007950d81";
+export declare const PROXY_ADDRESS = "0x0d7AD391E89A4B4b21f4F74563Caa546C104D97D";
 export declare const FACTORY_ADDRESS = "0x902e7cdDB4821c30B4A8FD7F8FDF62c439AA0657";
 export declare const INIT_CODE_HASH = "0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68";
 export declare const MINIMUM_LIQUIDITY: JSBI;
@@ -43,3 +43,7 @@ export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANS
 export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS = 4;
 export declare const SWAP_ACTION_TOKENS_FOR_EXACT_ETH = 5;
 export declare const SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = 6;
+export declare const ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN = 7;
+export declare const REMOVE_LIQUIDITY_ACTION_TOKEN = 8;
+export declare const REMOVE_LIQUIDITY_ACTION_ETH = 9;
+export declare const REMOVE_LIQUIDITY_ACTION_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 10;

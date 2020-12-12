@@ -86,7 +86,7 @@ export abstract class Router {
    * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
    * @param objectId objectId for the EthItem
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, needUnwrap: boolean, objectId: number | null): SwapParameters {
+  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, needUnwrap: boolean, objectId: string | null): SwapParameters {
     const web3 = new Web3();
     const etherIn = trade.inputAmount.currency === ETHER
     const etherOut = trade.outputAmount.currency === ETHER
@@ -129,7 +129,7 @@ export abstract class Router {
               : SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS
           }
 
-          // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+          // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap)
           ethItemArgs = web3.eth.abi.encodeParameters(
             ["uint256", "bytes"],
             [operation, web3.eth.abi.encodeParameters(
@@ -137,7 +137,7 @@ export abstract class Router {
               [amountIn, amountOut, path, to, deadline, needUnwrap]
             )]
           )
-          args = [to, PROXY_ADDRESS, objectId ?? 0, amountIn, ethItemArgs]
+          args = [to, PROXY_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
           value = ZERO_HEX
 
           break
@@ -150,7 +150,7 @@ export abstract class Router {
             operation = SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS
           }
 
-          // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+          // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool uwrap)
           ethItemArgs = web3.eth.abi.encodeParameters(
             ["uint256", "bytes"],
             [operation, web3.eth.abi.encodeParameters(
@@ -158,7 +158,7 @@ export abstract class Router {
               [amountOut, amountIn, path, to, deadline, needUnwrap]
             )]
           )
-          args = [to, PROXY_ADDRESS, objectId ?? 0, amountIn, ethItemArgs]
+          args = [to, PROXY_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
           value = ZERO_HEX
 
           break
@@ -169,20 +169,20 @@ export abstract class Router {
         case TradeType.EXACT_INPUT:
           if (etherIn) {
             methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
-            // (uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap)
-            args = [amountOut, path, to, deadline, needUnwrap]
+            // (uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap, bool callback)
+            args = [amountOut, path, to, deadline, needUnwrap, false]
             value = amountIn
           } else if (etherOut) {
             methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
-            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap)
-            args = [amountIn, amountOut, path, to, deadline, needUnwrap]
+            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap, bool callback)
+            args = [amountIn, amountOut, path, to, deadline, needUnwrap, false]
             value = ZERO_HEX
           } else {
             methodName = useFeeOnTransfer
               ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
               : 'swapExactTokensForTokens'
-            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool unwrap)
-            args = [amountIn, amountOut, path, to, deadline, needUnwrap]
+            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            args = [amountIn, amountOut, path, to, deadline, needUnwrap, false]
             value = ZERO_HEX
           }
           break
@@ -190,18 +190,18 @@ export abstract class Router {
           invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
           if (etherIn) {
             methodName = 'swapETHForExactTokens'
-            // (uint amountOut, address[] calldata path, address to, uint deadline, bool unwrap)
-            args = [amountOut, path, to, deadline, needUnwrap]
+            // (uint amountOut, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            args = [amountOut, path, to, deadline, needUnwrap, false]
             value = amountIn
           } else if (etherOut) {
             methodName = 'swapTokensForExactETH'
-            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap)
-            args = [amountOut, amountIn, path, to, deadline, needUnwrap]
+            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            args = [amountOut, amountIn, path, to, deadline, needUnwrap, false]
             value = ZERO_HEX
           } else {
             methodName = 'swapTokensForExactTokens'
-            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap)
-            args = [amountOut, amountIn, path, to, deadline, needUnwrap]
+            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            args = [amountOut, amountIn, path, to, deadline, needUnwrap, false]
             value = ZERO_HEX
           }
           break
