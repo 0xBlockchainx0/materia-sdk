@@ -22,8 +22,20 @@ export enum Rounding {
   ROUND_UP
 }
 
+export const ChainName = {
+  [ChainId.MAINNET]: 'mainnet',
+  [ChainId.ROPSTEN]: 'ropsten',
+  [ChainId.RINKEBY]: 'rinkeby',
+  [ChainId.GÖRLI]: 'goerli',
+  [ChainId.KOVAN]: 'kovan'
+}
+
+export const DEFAULT_CHAIN_ID = ChainId.ROPSTEN
+export const INFURA_PROJECT_KEY = 'b038585ef8b84eb7a116e796d9403896'
+export const INFURA_ADDRESS = `https://${ChainName[DEFAULT_CHAIN_ID]}.infura.io/v3/${INFURA_PROJECT_KEY}`
 export const PROXY_ADDRESS = '0x93c2504a7fc50808Ff9AF73ac68a6479f04D6806'
 export const FACTORY_ADDRESS = '0x9Be8177C4395Cc27de34aeB8F231FA39513C155D'
+export const ERC20_WRAPPER_V1_ADDRESS = '0x651A6837457f1f7179a590deC647Ec5D647B8231'
 export const INIT_CODE_HASH = '0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68'
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
 
@@ -37,6 +49,8 @@ export const TEN = JSBI.BigInt(10)
 export const _100 = JSBI.BigInt(100)
 export const _997 = JSBI.BigInt(997)
 export const _1000 = JSBI.BigInt(1000)
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export enum SolidityType {
   uint8 = 'uint8',

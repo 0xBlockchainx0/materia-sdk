@@ -18,7 +18,7 @@ var networks = require('@ethersproject/networks');
 var providers = require('@ethersproject/providers');
 var IMateriaV2Pair = _interopDefault(require('@materia-dex/materia-contracts-core/build/IMateriaPair.json'));
 
-var _SOLIDITY_TYPE_MAXIMA;
+var _ChainName, _SOLIDITY_TYPE_MAXIMA;
 
 (function (ChainId) {
   ChainId[ChainId["MAINNET"] = 1] = "MAINNET";
@@ -39,6 +39,7 @@ var _SOLIDITY_TYPE_MAXIMA;
   Rounding[Rounding["ROUND_UP"] = 2] = "ROUND_UP";
 })(exports.Rounding || (exports.Rounding = {}));
 
+var ChainName = (_ChainName = {}, _ChainName[exports.ChainId.MAINNET] = 'mainnet', _ChainName[exports.ChainId.ROPSTEN] = 'ropsten', _ChainName[exports.ChainId.RINKEBY] = 'rinkeby', _ChainName[exports.ChainId.GÖRLI] = 'goerli', _ChainName[exports.ChainId.KOVAN] = 'kovan', _ChainName);
 var PROXY_ADDRESS = '0x93c2504a7fc50808Ff9AF73ac68a6479f04D6806';
 var FACTORY_ADDRESS = '0x9Be8177C4395Cc27de34aeB8F231FA39513C155D';
 var INIT_CODE_HASH = '0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68';
@@ -53,6 +54,7 @@ var TEN = /*#__PURE__*/JSBI.BigInt(10);
 var _100 = /*#__PURE__*/JSBI.BigInt(100);
 var _997 = /*#__PURE__*/JSBI.BigInt(997);
 var _1000 = /*#__PURE__*/JSBI.BigInt(1000);
+var ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 var SolidityType;
 
 (function (SolidityType) {
@@ -387,7 +389,7 @@ function Currency(decimals, symbol, name) {
 Currency.ETHER = /*#__PURE__*/new Currency(18, 'ETH', 'Ether');
 var ETHER = Currency.ETHER;
 
-var _WETH;
+var _IETH;
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
@@ -450,7 +452,7 @@ function currencyEquals(currencyA, currencyB) {
     return currencyA === currencyB;
   }
 }
-var WETH = (_WETH = {}, _WETH[exports.ChainId.MAINNET] = /*#__PURE__*/new Token(exports.ChainId.MAINNET, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 18, 'WETH', 'Wrapped Ether'), _WETH[exports.ChainId.ROPSTEN] = /*#__PURE__*/new Token(exports.ChainId.ROPSTEN, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'), _WETH[exports.ChainId.RINKEBY] = /*#__PURE__*/new Token(exports.ChainId.RINKEBY, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'), _WETH[exports.ChainId.GÖRLI] = /*#__PURE__*/new Token(exports.ChainId.GÖRLI, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 18, 'WETH', 'Wrapped Ether'), _WETH[exports.ChainId.KOVAN] = /*#__PURE__*/new Token(exports.ChainId.KOVAN, '0xd0A1E359811322d97991E03f863a0C30C2cF029C', 18, 'WETH', 'Wrapped Ether'), _WETH);
+var IETH = (_IETH = {}, _IETH[exports.ChainId.MAINNET] = /*#__PURE__*/new Token(exports.ChainId.MAINNET, '0xAa843dd5fa4F9f07E2De5920dBf73D9a875C9e10', 18, 'IETH', 'EthereumItem'), _IETH[exports.ChainId.ROPSTEN] = /*#__PURE__*/new Token(exports.ChainId.ROPSTEN, '0x0C0488a2e3f5FdEb482Bf5A76AB1ef27A3658101', 18, 'IETH', 'EthereumItem'), _IETH[exports.ChainId.RINKEBY] = /*#__PURE__*/new Token(exports.ChainId.RINKEBY, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH[exports.ChainId.GÖRLI] = /*#__PURE__*/new Token(exports.ChainId.GÖRLI, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH[exports.ChainId.KOVAN] = /*#__PURE__*/new Token(exports.ChainId.KOVAN, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH);
 
 var _toSignificantRoundin, _toFixedRounding;
 var Decimal = /*#__PURE__*/toFormat(_Decimal);
@@ -773,7 +775,7 @@ var Pair = /*#__PURE__*/function () {
   function Pair(tokenAmountA, tokenAmountB) {
     var tokenAmounts = tokenAmountA.token.sortsBefore(tokenAmountB.token) // does safety checks
     ? [tokenAmountA, tokenAmountB] : [tokenAmountB, tokenAmountA];
-    this.liquidityToken = new Token(tokenAmounts[0].token.chainId, Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token), 18, 'LP', 'Materia');
+    this.liquidityToken = new Token(tokenAmounts[0].token.chainId, Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token), 18, 'MP', 'Materia');
     this.tokenAmounts = tokenAmounts;
   }
 
@@ -969,9 +971,9 @@ var Route = /*#__PURE__*/function () {
     !pairs.every(function (pair) {
       return pair.chainId === pairs[0].chainId;
     }) ?  invariant(false, 'CHAIN_IDS')  : void 0;
-    !(input instanceof Token && pairs[0].involvesToken(input) || input === ETHER && pairs[0].involvesToken(WETH[pairs[0].chainId])) ?  invariant(false, 'INPUT')  : void 0;
-    !(typeof output === 'undefined' || output instanceof Token && pairs[pairs.length - 1].involvesToken(output) || output === ETHER && pairs[pairs.length - 1].involvesToken(WETH[pairs[0].chainId])) ?  invariant(false, 'OUTPUT')  : void 0;
-    var path = [input instanceof Token ? input : WETH[pairs[0].chainId]];
+    !(input instanceof Token && pairs[0].involvesToken(input) || input === ETHER && pairs[0].involvesToken(IETH[pairs[0].chainId])) ?  invariant(false, 'INPUT')  : void 0;
+    !(typeof output === 'undefined' || output instanceof Token && pairs[pairs.length - 1].involvesToken(output) || output === ETHER && pairs[pairs.length - 1].involvesToken(IETH[pairs[0].chainId])) ?  invariant(false, 'OUTPUT')  : void 0;
+    var path = [input instanceof Token ? input : IETH[pairs[0].chainId]];
 
     for (var _iterator = _createForOfIteratorHelperLoose(pairs.entries()), _step; !(_step = _iterator()).done;) {
       var _step$value = _step.value,
@@ -1093,19 +1095,19 @@ function tradeComparator(a, b) {
 }
 /**
  * Given a currency amount and a chain ID, returns the equivalent representation as the token amount.
- * In other words, if the currency is ETHER, returns the WETH token amount for the given chain. Otherwise, returns
+ * In other words, if the currency is ETHER, returns the IETH token amount for the given chain. Otherwise, returns
  * the input currency amount.
  */
 
 function wrappedAmount(currencyAmount, chainId) {
   if (currencyAmount instanceof TokenAmount) return currencyAmount;
-  if (currencyAmount.currency === ETHER) return new TokenAmount(WETH[chainId], currencyAmount.raw);
+  if (currencyAmount.currency === ETHER) return new TokenAmount(IETH[chainId], currencyAmount.raw);
     invariant(false, 'CURRENCY')  ;
 }
 
 function wrappedCurrency(currency, chainId) {
   if (currency instanceof Token) return currency;
-  if (currency === ETHER) return WETH[chainId];
+  if (currency === ETHER) return IETH[chainId];
     invariant(false, 'CURRENCY')  ;
 }
 /**
@@ -1630,6 +1632,7 @@ exports.ETHER = ETHER;
 exports.FACTORY_ADDRESS = FACTORY_ADDRESS;
 exports.Fetcher = Fetcher;
 exports.Fraction = Fraction;
+exports.IETH = IETH;
 exports.INIT_CODE_HASH = INIT_CODE_HASH;
 exports.InsufficientInputAmountError = InsufficientInputAmountError;
 exports.InsufficientReservesError = InsufficientReservesError;
@@ -1652,7 +1655,6 @@ exports.SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = SWAP_ACTION_TOKENS_FOR_EXACT_TOKEN
 exports.Token = Token;
 exports.TokenAmount = TokenAmount;
 exports.Trade = Trade;
-exports.WETH = WETH;
 exports.currencyEquals = currencyEquals;
 exports.inputOutputComparator = inputOutputComparator;
 exports.tradeComparator = tradeComparator;

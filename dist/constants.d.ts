@@ -16,8 +16,19 @@ export declare enum Rounding {
     ROUND_HALF_UP = 1,
     ROUND_UP = 2
 }
+export declare const ChainName: {
+    1: string;
+    3: string;
+    4: string;
+    5: string;
+    42: string;
+};
+export declare const DEFAULT_CHAIN_ID = ChainId.ROPSTEN;
+export declare const INFURA_PROJECT_KEY = "b038585ef8b84eb7a116e796d9403896";
+export declare const INFURA_ADDRESS: string;
 export declare const PROXY_ADDRESS = "0x93c2504a7fc50808Ff9AF73ac68a6479f04D6806";
 export declare const FACTORY_ADDRESS = "0x9Be8177C4395Cc27de34aeB8F231FA39513C155D";
+export declare const ERC20_WRAPPER_V1_ADDRESS = "0x651A6837457f1f7179a590deC647Ec5D647B8231";
 export declare const INIT_CODE_HASH = "0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68";
 export declare const MINIMUM_LIQUIDITY: JSBI;
 export declare const ZERO: JSBI;
@@ -29,6 +40,7 @@ export declare const TEN: JSBI;
 export declare const _100: JSBI;
 export declare const _997: JSBI;
 export declare const _1000: JSBI;
+export declare const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export declare enum SolidityType {
     uint8 = "uint8",
     uint256 = "uint256"
