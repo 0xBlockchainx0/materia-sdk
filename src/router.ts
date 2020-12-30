@@ -1,5 +1,5 @@
 import {
-  PROXY_ADDRESS,
+  ORCHESTRATOR_ADDRESS,
   SWAP_ACTION_EXACT_TOKENS_FOR_ETH,
   SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS,
@@ -137,7 +137,7 @@ export abstract class Router {
               [amountIn, amountOut, path, to, deadline, needUnwrap]
             )]
           )
-          args = [to, PROXY_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
+          args = [to, ORCHESTRATOR_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
           value = ZERO_HEX
 
           break
@@ -158,7 +158,7 @@ export abstract class Router {
               [amountOut, amountIn, path, to, deadline, needUnwrap]
             )]
           )
-          args = [to, PROXY_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
+          args = [to, ORCHESTRATOR_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
           value = ZERO_HEX
 
           break
