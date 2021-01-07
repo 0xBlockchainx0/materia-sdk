@@ -59,8 +59,7 @@ export declare abstract class Router {
      * @param trade to produce call parameters for
      * @param options options for the call parameters
      * @param isEthItem flag for check if is EthItem
-     * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
      * @param objectId objectId for the EthItem
      */
-    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, needUnwrap: boolean, objectId: string | null): SwapParameters;
+    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, objectId: string | null): SwapParameters;
 }

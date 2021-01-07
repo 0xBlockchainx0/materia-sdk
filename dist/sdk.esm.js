@@ -40,8 +40,8 @@ var Rounding;
 })(Rounding || (Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName);
-var PROXY_ADDRESS = '0x93c2504a7fc50808Ff9AF73ac68a6479f04D6806';
-var FACTORY_ADDRESS = '0x9Be8177C4395Cc27de34aeB8F231FA39513C155D';
+var ORCHESTRATOR_ADDRESS = '0x27eC48De2FEf78BacFCF5A44e0C3Fe7e3676E6c5';
+var FACTORY_ADDRESS = '0xe34Fde926ab6ff4bc1B9d069FDB10DA922Af6881';
 var INIT_CODE_HASH = '0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
@@ -63,16 +63,11 @@ var SolidityType;
 })(SolidityType || (SolidityType = {}));
 
 var SOLIDITY_TYPE_MAXIMA = (_SOLIDITY_TYPE_MAXIMA = {}, _SOLIDITY_TYPE_MAXIMA[SolidityType.uint8] = /*#__PURE__*/JSBI.BigInt('0xff'), _SOLIDITY_TYPE_MAXIMA[SolidityType.uint256] = /*#__PURE__*/JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'), _SOLIDITY_TYPE_MAXIMA);
-var SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 1;
-var SWAP_ACTION_EXACT_TOKENS_FOR_ETH = 2;
-var SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 3;
-var SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS = 4;
+var ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN = 1;
+var SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS = 2;
+var SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = 3;
+var SWAP_ACTION_EXACT_TOKENS_FOR_ETH = 4;
 var SWAP_ACTION_TOKENS_FOR_EXACT_ETH = 5;
-var SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = 6;
-var ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN = 7;
-var REMOVE_LIQUIDITY_ACTION_TOKEN = 8;
-var REMOVE_LIQUIDITY_ACTION_ETH = 9;
-var REMOVE_LIQUIDITY_ACTION_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 10;
 
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
@@ -1399,12 +1394,11 @@ var Router = /*#__PURE__*/function () {
    * @param trade to produce call parameters for
    * @param options options for the call parameters
    * @param isEthItem flag for check if is EthItem
-   * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
    * @param objectId objectId for the EthItem
    */
 
 
-  Router.swapCallParameters = function swapCallParameters(trade, options, isEthItem, needUnwrap, objectId) {
+  Router.swapCallParameters = function swapCallParameters(trade, options, isEthItem, objectId) {
     var web3 = new Web3();
     var etherIn = trade.inputAmount.currency === ETHER;
     var etherOut = trade.outputAmount.currency === ETHER; // the router does not support both ether in and out
@@ -1418,7 +1412,6 @@ var Router = /*#__PURE__*/function () {
       return token.address;
     });
     var deadline = 'ttl' in options ? "0x" + (Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16) : "0x" + options.deadline.toString(16);
-    var useFeeOnTransfer = Boolean(options.feeOnTransfer);
     var methodName;
     var args;
     var value;
@@ -1432,29 +1425,27 @@ var Router = /*#__PURE__*/function () {
       switch (trade.tradeType) {
         case TradeType.EXACT_INPUT:
           if (etherOut) {
-            operation = useFeeOnTransfer ? SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS : SWAP_ACTION_EXACT_TOKENS_FOR_ETH;
+            operation = SWAP_ACTION_EXACT_TOKENS_FOR_ETH;
           } else {
-            operation = useFeeOnTransfer ? SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS : SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS;
-          } // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap)
+            operation = SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS;
+          } // (uint amountOutMin, address[] memory path, address to, uint deadline)
 
 
-          ethItemArgs = web3.eth.abi.encodeParameters(["uint256", "bytes"], [operation, web3.eth.abi.encodeParameters(["uint", "uint", "address[]", "address", "uint", "bool"], [amountIn, amountOut, path, to, deadline, needUnwrap])]);
-          args = [to, PROXY_ADDRESS, objectId !== null && objectId !== void 0 ? objectId : "0", amountIn, ethItemArgs];
+          ethItemArgs = web3.eth.abi.encodeParameters(["uint256", "bytes"], [operation, web3.eth.abi.encodeParameters(["uint", "address[]", "address", "uint"], [amountOut, path, to, deadline])]);
+          args = [to, ORCHESTRATOR_ADDRESS, objectId !== null && objectId !== void 0 ? objectId : "0", amountIn, ethItemArgs];
           value = ZERO_HEX;
           break;
 
         case TradeType.EXACT_OUTPUT:
-          !!useFeeOnTransfer ? process.env.NODE_ENV !== "production" ? invariant(false, 'EXACT_OUT_FOT') : invariant(false) : void 0;
-
           if (etherOut) {
             operation = SWAP_ACTION_TOKENS_FOR_EXACT_ETH;
           } else {
             operation = SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS;
-          } // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool uwrap)
+          } // (uint amountOut, address[] memory path, address to, uint deadline)
 
 
-          ethItemArgs = web3.eth.abi.encodeParameters(["uint256", "bytes"], [operation, web3.eth.abi.encodeParameters(["uint", "uint", "address[]", "address", "uint", "bool"], [amountOut, amountIn, path, to, deadline, needUnwrap])]);
-          args = [to, PROXY_ADDRESS, objectId !== null && objectId !== void 0 ? objectId : "0", amountIn, ethItemArgs];
+          ethItemArgs = web3.eth.abi.encodeParameters(["uint256", "bytes"], [operation, web3.eth.abi.encodeParameters(["uint", "address[]", "address", "uint"], [amountOut, path, to, deadline])]);
+          args = [to, ORCHESTRATOR_ADDRESS, objectId !== null && objectId !== void 0 ? objectId : "0", amountIn, ethItemArgs];
           value = ZERO_HEX;
           break;
       }
@@ -1462,41 +1453,39 @@ var Router = /*#__PURE__*/function () {
       switch (trade.tradeType) {
         case TradeType.EXACT_INPUT:
           if (etherIn) {
-            methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'; // (uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap, bool callback)
+            methodName = 'swapExactETHForTokens'; // (uint amountOutMin, address[] memory path, address to, uint deadline)
 
-            args = [amountOut, path, to, deadline, needUnwrap, false];
+            args = [amountOut, path, to, deadline];
             value = amountIn;
           } else if (etherOut) {
-            methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'; // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap, bool callback)
+            methodName = 'swapExactTokensForETH'; // (uint amountIn, uint amountOutMin, address[] memory path, address to, uint deadline)
 
-            args = [amountIn, amountOut, path, to, deadline, needUnwrap, false];
+            args = [amountIn, amountOut, path, to, deadline];
             value = ZERO_HEX;
           } else {
-            methodName = useFeeOnTransfer ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens' : 'swapExactTokensForTokens'; // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            methodName = 'swapExactTokensForTokens'; // (uint amountIn, uint amountOutMin, address[] memory path, address to, uint deadline)
 
-            args = [amountIn, amountOut, path, to, deadline, needUnwrap, false];
+            args = [amountIn, amountOut, path, to, deadline];
             value = ZERO_HEX;
           }
 
           break;
 
         case TradeType.EXACT_OUTPUT:
-          !!useFeeOnTransfer ? process.env.NODE_ENV !== "production" ? invariant(false, 'EXACT_OUT_FOT') : invariant(false) : void 0;
-
           if (etherIn) {
-            methodName = 'swapETHForExactTokens'; // (uint amountOut, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            methodName = 'swapETHForExactTokens'; // (uint amountOut, address[] memory path, address to, uint deadline)
 
-            args = [amountOut, path, to, deadline, needUnwrap, false];
+            args = [amountOut, path, to, deadline];
             value = amountIn;
           } else if (etherOut) {
-            methodName = 'swapTokensForExactETH'; // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            methodName = 'swapTokensForExactETH'; // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
 
-            args = [amountOut, amountIn, path, to, deadline, needUnwrap, false];
+            args = [amountOut, amountIn, path, to, deadline];
             value = ZERO_HEX;
           } else {
-            methodName = 'swapTokensForExactTokens'; // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
+            methodName = 'swapTokensForExactTokens'; // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
 
-            args = [amountOut, amountIn, path, to, deadline, needUnwrap, false];
+            args = [amountOut, amountIn, path, to, deadline];
             value = ZERO_HEX;
           }
 
@@ -1624,5 +1613,5 @@ var Fetcher = /*#__PURE__*/function () {
   return Fetcher;
 }();
 
-export { ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN, ChainId, Currency, CurrencyAmount, ETHER, FACTORY_ADDRESS, Fetcher, Fraction, IETH, INIT_CODE_HASH, InsufficientInputAmountError, InsufficientReservesError, MINIMUM_LIQUIDITY, PROXY_ADDRESS, Pair, Percent, Price, REMOVE_LIQUIDITY_ACTION_ETH, REMOVE_LIQUIDITY_ACTION_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS, REMOVE_LIQUIDITY_ACTION_TOKEN, Rounding, Route, Router, SWAP_ACTION_EXACT_TOKENS_FOR_ETH, SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS, SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS, SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS, SWAP_ACTION_TOKENS_FOR_EXACT_ETH, SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS, Token, TokenAmount, Trade, TradeType, currencyEquals, inputOutputComparator, tradeComparator };
+export { ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN, ChainId, Currency, CurrencyAmount, ETHER, FACTORY_ADDRESS, Fetcher, Fraction, IETH, INIT_CODE_HASH, InsufficientInputAmountError, InsufficientReservesError, MINIMUM_LIQUIDITY, ORCHESTRATOR_ADDRESS, Pair, Percent, Price, Rounding, Route, Router, SWAP_ACTION_EXACT_TOKENS_FOR_ETH, SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS, SWAP_ACTION_TOKENS_FOR_EXACT_ETH, SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS, Token, TokenAmount, Trade, TradeType, currencyEquals, inputOutputComparator, tradeComparator };
 //# sourceMappingURL=sdk.esm.js.map

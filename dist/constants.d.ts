@@ -26,8 +26,8 @@ export declare const ChainName: {
 export declare const DEFAULT_CHAIN_ID = ChainId.ROPSTEN;
 export declare const INFURA_PROJECT_KEY = "b038585ef8b84eb7a116e796d9403896";
 export declare const INFURA_ADDRESS: string;
-export declare const PROXY_ADDRESS = "0x93c2504a7fc50808Ff9AF73ac68a6479f04D6806";
-export declare const FACTORY_ADDRESS = "0x9Be8177C4395Cc27de34aeB8F231FA39513C155D";
+export declare const ORCHESTRATOR_ADDRESS = "0x27eC48De2FEf78BacFCF5A44e0C3Fe7e3676E6c5";
+export declare const FACTORY_ADDRESS = "0xe34Fde926ab6ff4bc1B9d069FDB10DA922Af6881";
 export declare const ERC20_WRAPPER_V1_ADDRESS = "0x651A6837457f1f7179a590deC647Ec5D647B8231";
 export declare const INIT_CODE_HASH = "0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68";
 export declare const MINIMUM_LIQUIDITY: JSBI;
@@ -49,13 +49,8 @@ export declare const SOLIDITY_TYPE_MAXIMA: {
     uint8: JSBI;
     uint256: JSBI;
 };
-export declare const SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 1;
-export declare const SWAP_ACTION_EXACT_TOKENS_FOR_ETH = 2;
-export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 3;
-export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS = 4;
+export declare const ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN = 1;
+export declare const SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS = 2;
+export declare const SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = 3;
+export declare const SWAP_ACTION_EXACT_TOKENS_FOR_ETH = 4;
 export declare const SWAP_ACTION_TOKENS_FOR_EXACT_ETH = 5;
-export declare const SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS = 6;
-export declare const ADD_LIQUIDITY_ACTION_SAFE_TRANSFER_TOKEN = 7;
-export declare const REMOVE_LIQUIDITY_ACTION_TOKEN = 8;
-export declare const REMOVE_LIQUIDITY_ACTION_ETH = 9;
-export declare const REMOVE_LIQUIDITY_ACTION_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS = 10;

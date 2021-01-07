@@ -1,9 +1,7 @@
 import {
   ORCHESTRATOR_ADDRESS,
   SWAP_ACTION_EXACT_TOKENS_FOR_ETH,
-  SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS,
-  SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   SWAP_ACTION_TOKENS_FOR_EXACT_ETH,
   SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS,
   TradeType
@@ -83,10 +81,9 @@ export abstract class Router {
    * @param trade to produce call parameters for
    * @param options options for the call parameters
    * @param isEthItem flag for check if is EthItem
-   * @param needUnwrap flag for check if after the swap the EthItem needs to be unwrapped
    * @param objectId objectId for the EthItem
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, needUnwrap: boolean, objectId: string | null): SwapParameters {
+  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, objectId: string | null): SwapParameters {
     const web3 = new Web3();
     const etherIn = trade.inputAmount.currency === ETHER
     const etherOut = trade.outputAmount.currency === ETHER
@@ -104,8 +101,6 @@ export abstract class Router {
         ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
         : `0x${options.deadline.toString(16)}`
 
-    const useFeeOnTransfer = Boolean(options.feeOnTransfer)
-
     let methodName: string
     let args: (any | any[])[]
     let value: string
@@ -120,21 +115,17 @@ export abstract class Router {
       switch (trade.tradeType) {
         case TradeType.EXACT_INPUT:
           if (etherOut) {
-            operation = useFeeOnTransfer
-              ? SWAP_ACTION_EXACT_TOKENS_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS
-              : SWAP_ACTION_EXACT_TOKENS_FOR_ETH
+            operation = SWAP_ACTION_EXACT_TOKENS_FOR_ETH 
           } else {
-            operation = useFeeOnTransfer
-              ? SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS
-              : SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS
+            operation = SWAP_ACTION_EXACT_TOKENS_FOR_TOKENS
           }
 
-          // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap)
+          // (uint amountOutMin, address[] memory path, address to, uint deadline)
           ethItemArgs = web3.eth.abi.encodeParameters(
             ["uint256", "bytes"],
             [operation, web3.eth.abi.encodeParameters(
-              ["uint", "uint", "address[]", "address", "uint", "bool"],
-              [amountIn, amountOut, path, to, deadline, needUnwrap]
+              ["uint", "address[]", "address", "uint"],
+              [amountOut, path, to, deadline]
             )]
           )
           args = [to, ORCHESTRATOR_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
@@ -142,20 +133,18 @@ export abstract class Router {
 
           break
         case TradeType.EXACT_OUTPUT:
-          invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
-
           if (etherOut) {
             operation = SWAP_ACTION_TOKENS_FOR_EXACT_ETH
           } else {
             operation = SWAP_ACTION_TOKENS_FOR_EXACT_TOKENS
           }
 
-          // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool uwrap)
+          // (uint amountOut, address[] memory path, address to, uint deadline)
           ethItemArgs = web3.eth.abi.encodeParameters(
             ["uint256", "bytes"],
             [operation, web3.eth.abi.encodeParameters(
-              ["uint", "uint", "address[]", "address", "uint", "bool"],
-              [amountOut, amountIn, path, to, deadline, needUnwrap]
+              ["uint", "address[]", "address", "uint"],
+              [amountOut, path, to, deadline]
             )]
           )
           args = [to, ORCHESTRATOR_ADDRESS, objectId ?? "0", amountIn, ethItemArgs]
@@ -168,40 +157,37 @@ export abstract class Router {
       switch (trade.tradeType) {
         case TradeType.EXACT_INPUT:
           if (etherIn) {
-            methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
-            // (uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap, bool callback)
-            args = [amountOut, path, to, deadline, needUnwrap, false]
+            methodName = 'swapExactETHForTokens'
+            // (uint amountOutMin, address[] memory path, address to, uint deadline)
+            args = [amountOut, path, to, deadline]
             value = amountIn
           } else if (etherOut) {
-            methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
-            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool uwrap, bool callback)
-            args = [amountIn, amountOut, path, to, deadline, needUnwrap, false]
+            methodName = 'swapExactTokensForETH'
+            // (uint amountIn, uint amountOutMin, address[] memory path, address to, uint deadline)
+            args = [amountIn, amountOut, path, to, deadline]
             value = ZERO_HEX
           } else {
-            methodName = useFeeOnTransfer
-              ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-              : 'swapExactTokensForTokens'
-            // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
-            args = [amountIn, amountOut, path, to, deadline, needUnwrap, false]
+            methodName = 'swapExactTokensForTokens'
+            // (uint amountIn, uint amountOutMin, address[] memory path, address to, uint deadline)
+            args = [amountIn, amountOut, path, to, deadline]
             value = ZERO_HEX
           }
           break
         case TradeType.EXACT_OUTPUT:
-          invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
           if (etherIn) {
             methodName = 'swapETHForExactTokens'
-            // (uint amountOut, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
-            args = [amountOut, path, to, deadline, needUnwrap, false]
+            // (uint amountOut, address[] memory path, address to, uint deadline)
+            args = [amountOut, path, to, deadline]
             value = amountIn
           } else if (etherOut) {
             methodName = 'swapTokensForExactETH'
-            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
-            args = [amountOut, amountIn, path, to, deadline, needUnwrap, false]
+            // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
+            args = [amountOut, amountIn, path, to, deadline]
             value = ZERO_HEX
           } else {
             methodName = 'swapTokensForExactTokens'
-            // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline, bool unwrap, bool callback)
-            args = [amountOut, amountIn, path, to, deadline, needUnwrap, false]
+            // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
+            args = [amountOut, amountIn, path, to, deadline]
             value = ZERO_HEX
           }
           break
