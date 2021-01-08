@@ -26,7 +26,7 @@ export declare const ChainName: {
 export declare const DEFAULT_CHAIN_ID = ChainId.ROPSTEN;
 export declare const INFURA_PROJECT_KEY = "b038585ef8b84eb7a116e796d9403896";
 export declare const INFURA_ADDRESS: string;
-export declare const ORCHESTRATOR_ADDRESS = "0x27eC48De2FEf78BacFCF5A44e0C3Fe7e3676E6c5";
+export declare const ORCHESTRATOR_ADDRESS = "0x6ED3b62FD9A49088EFf1E84405c071e8E51B674B";
 export declare const FACTORY_ADDRESS = "0xe34Fde926ab6ff4bc1B9d069FDB10DA922Af6881";
 export declare const ERC20_WRAPPER_V1_ADDRESS = "0x651A6837457f1f7179a590deC647Ec5D647B8231";
 export declare const INIT_CODE_HASH = "0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68";
