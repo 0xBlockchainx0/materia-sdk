@@ -40,10 +40,10 @@ var _ChainName, _SOLIDITY_TYPE_MAXIMA;
 })(exports.Rounding || (exports.Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[exports.ChainId.MAINNET] = 'mainnet', _ChainName[exports.ChainId.ROPSTEN] = 'ropsten', _ChainName[exports.ChainId.RINKEBY] = 'rinkeby', _ChainName[exports.ChainId.GÖRLI] = 'goerli', _ChainName[exports.ChainId.KOVAN] = 'kovan', _ChainName);
-var ORCHESTRATOR_ADDRESS = '0xcC4de6469bc6F2417c87CbECB2179b7c5F090fe9';
-var FACTORY_ADDRESS = '0xe34Fde926ab6ff4bc1B9d069FDB10DA922Af6881';
+var ORCHESTRATOR_ADDRESS = '0xe42BA6E8Ac3c2Da24AEFC2bb9d056AD2Bc4d5907';
+var FACTORY_ADDRESS = '0x8167211D76890c91c1d67c5Dceda6769b875eC77';
 
-var INIT_CODE_HASH = '0xf79c9250dcc326869d68244ec72bf9db8eef77e832de86e4ddb5d4aa37376d68';
+var INIT_CODE_HASH = '0x548f5843b0cbe6ec5a3ca1a7dd1714961b9da55b00a5692f585f5a33a33882a9';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);
