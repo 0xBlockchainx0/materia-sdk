@@ -251,7 +251,7 @@ export class Trade {
     pairs: Pair[],
     currencyAmountIn: CurrencyAmount,
     currencyOut: Currency,
-    { maxNumResults = 3, maxHops = 3 }: BestTradeOptions = {},
+    { maxNumResults = 3, maxHops = 2 }: BestTradeOptions = {},
     // used in recursion.
     currentPairs: Pair[] = [],
     originalAmountIn: CurrencyAmount = currencyAmountIn,
@@ -339,7 +339,7 @@ export class Trade {
     pairs: Pair[],
     currencyIn: Currency,
     currencyAmountOut: CurrencyAmount,
-    { maxNumResults = 3, maxHops = 3 }: BestTradeOptions = {},
+    { maxNumResults = 3, maxHops = 2 }: BestTradeOptions = {},
     // used in recursion.
     currentPairs: Pair[] = [],
     originalAmountOut: CurrencyAmount = currencyAmountOut,
