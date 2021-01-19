@@ -1,4 +1,4 @@
-import { Percent, Trade } from './entities';
+import { Percent, Token, Trade } from './entities';
 /**
  * Options for producing the arguments to send call to the router.
  */
@@ -58,8 +58,13 @@ export declare abstract class Router {
      * Produces the on-chain method name to call and the hex encoded parameters to pass as arguments for a given trade.
      * @param trade to produce call parameters for
      * @param options options for the call parameters
+     * @param tokenIn input token address
+     * @param tokenOut output token address
+     * @param etherIn input currency is ETH
+    *  @param etherOut output currency is ETH
      * @param isEthItem flag for check if is EthItem
      * @param objectId objectId for the EthItem
      */
-    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, objectId: string | null): SwapParameters;
+    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, tokenIn: Token, tokenOut: Token, etherIn: Boolean, etherOut: Boolean, isEthItem: boolean, objectId: string | null): SwapParameters;
+    private static decodeInteroperableValueToERC20TokenAmount;
 }

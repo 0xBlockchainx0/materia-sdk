@@ -1,7 +1,7 @@
 {
   "name": "@materia-dex/sdk",
   "license": "MIT",
-  "version": "1.3.7",
+  "version": "1.4.1",
   "description": "An SDK for building applications on top of Materia.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -25,6 +25,7 @@
     "prepublishOnly": "tsdx build"
   },
   "dependencies": {
+    "@ethersproject/units": "^5.0.9",
     "@materia-dex/materia-contracts-core": "^1.1.2",
     "@materia-dex/materia-contracts-proxy": "^1.1.4",
     "big.js": "^5.2.2",

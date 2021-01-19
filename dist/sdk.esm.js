@@ -8,6 +8,7 @@ import toFormat from 'toformat';
 import _Decimal from 'decimal.js-light';
 import { keccak256, pack } from '@ethersproject/solidity';
 import Web3 from 'web3';
+import { parseUnits, formatUnits } from '@ethersproject/units';
 import { Contract } from '@ethersproject/contracts';
 import { getNetwork } from '@ethersproject/networks';
 import { getDefaultProvider } from '@ethersproject/providers';
@@ -1231,7 +1232,7 @@ var Trade = /*#__PURE__*/function () {
         _ref$maxNumResults = _ref.maxNumResults,
         maxNumResults = _ref$maxNumResults === void 0 ? 3 : _ref$maxNumResults,
         _ref$maxHops = _ref.maxHops,
-        maxHops = _ref$maxHops === void 0 ? 3 : _ref$maxHops;
+        maxHops = _ref$maxHops === void 0 ? 2 : _ref$maxHops;
 
     if (currentPairs === void 0) {
       currentPairs = [];
@@ -1313,7 +1314,7 @@ var Trade = /*#__PURE__*/function () {
         _ref2$maxNumResults = _ref2.maxNumResults,
         maxNumResults = _ref2$maxNumResults === void 0 ? 3 : _ref2$maxNumResults,
         _ref2$maxHops = _ref2.maxHops,
-        maxHops = _ref2$maxHops === void 0 ? 3 : _ref2$maxHops;
+        maxHops = _ref2$maxHops === void 0 ? 2 : _ref2$maxHops;
 
     if (currentPairs === void 0) {
       currentPairs = [];
@@ -1394,24 +1395,32 @@ var Router = /*#__PURE__*/function () {
    * Produces the on-chain method name to call and the hex encoded parameters to pass as arguments for a given trade.
    * @param trade to produce call parameters for
    * @param options options for the call parameters
+   * @param tokenIn input token address
+   * @param tokenOut output token address
+   * @param etherIn input currency is ETH
+  *  @param etherOut output currency is ETH
    * @param isEthItem flag for check if is EthItem
    * @param objectId objectId for the EthItem
    */
 
 
-  Router.swapCallParameters = function swapCallParameters(trade, options, isEthItem, objectId) {
-    var web3 = new Web3();
-    var etherIn = trade.inputAmount.currency === ETHER;
-    var etherOut = trade.outputAmount.currency === ETHER; // the router does not support both ether in and out
+  Router.swapCallParameters = function swapCallParameters(trade, options, tokenIn, tokenOut, etherIn, etherOut, isEthItem, objectId) {
+    var web3 = new Web3(); // the router does not support both ether in and out
 
     !!(etherIn && etherOut) ? process.env.NODE_ENV !== "production" ? invariant(false, 'ETHER_IN_OUT') : invariant(false) : void 0;
     !(!('ttl' in options) || options.ttl > 0) ? process.env.NODE_ENV !== "production" ? invariant(false, 'TTL') : invariant(false) : void 0;
     var to = validateAndParseAddress(options.recipient);
-    var amountIn = toHex(trade.maximumAmountIn(options.allowedSlippage));
-    var amountOut = toHex(trade.minimumAmountOut(options.allowedSlippage));
+    var currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(trade.maximumAmountIn(options.allowedSlippage), tokenIn, etherIn);
+    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(trade.minimumAmountOut(options.allowedSlippage), tokenOut, etherOut);
+    var amountIn = toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : trade.maximumAmountIn(options.allowedSlippage));
+    var amountOut = toHex(currencyAmountOut !== null && currencyAmountOut !== void 0 ? currencyAmountOut : trade.minimumAmountOut(options.allowedSlippage));
     var path = trade.route.path.map(function (token) {
       return token.address;
     });
+    var inputToken = path[0] == (tokenIn === null || tokenIn === void 0 ? void 0 : tokenIn.address) || etherIn ? path[0] : tokenIn === null || tokenIn === void 0 ? void 0 : tokenIn.address;
+    var outputToken = path[path.length - 1] == (tokenOut === null || tokenOut === void 0 ? void 0 : tokenOut.address) || etherOut ? path[path.length - 1] : tokenOut === null || tokenOut === void 0 ? void 0 : tokenOut.address;
+    path[0] = inputToken;
+    path[path.length - 1] = outputToken;
     var deadline = 'ttl' in options ? "0x" + (Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16) : "0x" + options.deadline.toString(16);
     var methodName;
     var args;
@@ -1499,6 +1508,42 @@ var Router = /*#__PURE__*/function () {
       args: args,
       value: value
     };
+  };
+
+  Router.decodeInteroperableValueToERC20TokenAmount = function decodeInteroperableValueToERC20TokenAmount(currencyAmount, erc20Currency, isETH) {
+    if (!currencyAmount || !erc20Currency || isETH) {
+      return undefined;
+    }
+
+    var value = currencyAmount.toExact();
+    var currency = currencyAmount.currency;
+
+    if (!value || !currency || !erc20Currency) {
+      return undefined;
+    }
+
+    try {
+      var formattedDecimals = currency.decimals - erc20Currency.decimals;
+      var typedValueParsed = parseUnits(value, currency.decimals).toString();
+      var typedValueFormatted = Number(0);
+
+      if (formattedDecimals > 0) {
+        typedValueFormatted = Number(formatUnits(typedValueParsed, formattedDecimals));
+      } else if (formattedDecimals == 0) {
+        typedValueFormatted = Number(formatUnits(typedValueParsed, currency.decimals));
+      } else {
+        // EthItem can't unwrap token with more than 18 decimals 
+        throw 'Too much decimals for EthItem';
+      }
+
+      return erc20Currency instanceof Token ? new TokenAmount(erc20Currency, JSBI.BigInt(typedValueFormatted)) : CurrencyAmount.ether(JSBI.BigInt(typedValueFormatted));
+    } catch (error) {
+      // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
+      // console.log(`Failed to parse input amount: "${value}"`, error)
+      return undefined;
+    }
+
+    return undefined;
   };
 
   return Router;

@@ -8,8 +8,10 @@ import {
 } from './constants'
 import invariant from 'tiny-invariant'
 import { validateAndParseAddress } from './utils'
-import { CurrencyAmount, ETHER, Percent, Trade } from './entities'
+import { Currency, CurrencyAmount, ETHER, Percent, Token, TokenAmount, Trade } from './entities'
 import Web3 from 'web3'
+import { formatUnits, parseUnits } from '@ethersproject/units'
+import { JSBI } from '.'
 
 /**
  * Options for producing the arguments to send call to the router.
@@ -80,22 +82,45 @@ export abstract class Router {
    * Produces the on-chain method name to call and the hex encoded parameters to pass as arguments for a given trade.
    * @param trade to produce call parameters for
    * @param options options for the call parameters
+   * @param tokenIn input token address
+   * @param tokenOut output token address
+   * @param etherIn input currency is ETH
+  *  @param etherOut output currency is ETH
    * @param isEthItem flag for check if is EthItem
    * @param objectId objectId for the EthItem
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, isEthItem: boolean, objectId: string | null): SwapParameters {
+  public static swapCallParameters(
+    trade: Trade,
+    options: TradeOptions | TradeOptionsDeadline, 
+    tokenIn: Token,
+    tokenOut: Token,
+    etherIn: Boolean,
+    etherOut: Boolean,
+    isEthItem: boolean, 
+    objectId: string | null,
+  ): SwapParameters {
     const web3 = new Web3();
-    const etherIn = trade.inputAmount.currency === ETHER
-    const etherOut = trade.outputAmount.currency === ETHER
     
     // the router does not support both ether in and out
     invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = validateAndParseAddress(options.recipient)
-    const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
-    const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
-    const path: string[] = trade.route.path.map(token => token.address)
+    
+    const currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(trade.maximumAmountIn(options.allowedSlippage), tokenIn, etherIn)
+    const currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(trade.minimumAmountOut(options.allowedSlippage), tokenOut, etherOut)
+
+    const amountIn: string = toHex(currencyAmountIn ?? trade.maximumAmountIn(options.allowedSlippage))
+    const amountOut: string = toHex(currencyAmountOut ?? trade.minimumAmountOut(options.allowedSlippage))
+    
+    let path: string[] = trade.route.path.map(token => token.address)
+
+    const inputToken = path[0] == tokenIn?.address || etherIn ? path[0] : tokenIn?.address
+    const outputToken = path[path.length - 1] == tokenOut?.address || etherOut ? path[path.length - 1] : tokenOut?.address
+
+    path[0] = inputToken
+    path[path.length - 1] = outputToken
+
     const deadline =
       'ttl' in options
         ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
@@ -199,5 +224,43 @@ export abstract class Router {
       args,
       value
     }
+  }
+
+  private static decodeInteroperableValueToERC20TokenAmount(currencyAmount: CurrencyAmount, erc20Currency: Currency, isETH: Boolean): CurrencyAmount | undefined {
+    if (!currencyAmount || !erc20Currency || isETH) {
+      return undefined
+    }
+    const value = currencyAmount.toExact()
+    const currency = currencyAmount.currency
+  
+    if (!value || !currency || !erc20Currency) {
+      return undefined
+    }
+    try {
+      const formattedDecimals = currency.decimals - erc20Currency.decimals
+      const typedValueParsed = parseUnits(value, currency.decimals).toString()
+      
+      let typedValueFormatted: Number = Number(0)
+  
+      if (formattedDecimals > 0) {
+        typedValueFormatted = Number(formatUnits(typedValueParsed, formattedDecimals))
+      }
+      else if (formattedDecimals == 0) {
+        typedValueFormatted = Number(formatUnits(typedValueParsed, currency.decimals))
+      }
+      else {
+        // EthItem can't unwrap token with more than 18 decimals 
+        throw 'Too much decimals for EthItem'
+      }
+      
+      return erc20Currency instanceof Token
+        ? new TokenAmount(erc20Currency, JSBI.BigInt(typedValueFormatted))
+        : CurrencyAmount.ether(JSBI.BigInt(typedValueFormatted))
+    } catch (error) {
+      // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
+      // console.log(`Failed to parse input amount: "${value}"`, error)
+      return undefined
+    }
+    return undefined
   }
 }
