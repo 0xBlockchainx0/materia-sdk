@@ -22,10 +22,12 @@ import { InsufficientReservesError, InsufficientInputAmountError } from '../erro
 import { Token } from './token'
 
 let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
+let BASE_FEE = JSBI.BigInt(30)
 
 export class Pair {
   public readonly liquidityToken: Token
   private readonly tokenAmounts: [TokenAmount, TokenAmount]
+  public readonly swapFee: JSBI
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
@@ -47,7 +49,7 @@ export class Pair {
     return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
   }
 
-  public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount) {
+  public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount, swapFee?: JSBI) {
     const tokenAmounts = tokenAmountA.token.sortsBefore(tokenAmountB.token) // does safety checks
       ? [tokenAmountA, tokenAmountB]
       : [tokenAmountB, tokenAmountA]
@@ -59,6 +61,7 @@ export class Pair {
       'Materia Pool'
     )
     this.tokenAmounts = tokenAmounts as [TokenAmount, TokenAmount]
+    this.swapFee = swapFee ?? BASE_FEE
   }
 
   /**
@@ -114,7 +117,7 @@ export class Pair {
   public get reserve1(): TokenAmount {
     return this.tokenAmounts[1]
   }
-
+  
   public reserveOf(token: Token): TokenAmount {
     invariant(this.involvesToken(token), 'TOKEN')
     return token.equals(this.token0) ? this.reserve0 : this.reserve1

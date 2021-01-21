@@ -1,12 +1,14 @@
 import { Price } from './fractions/price';
 import { TokenAmount } from './fractions/tokenAmount';
+import JSBI from 'jsbi';
 import { BigintIsh, ChainId } from '../constants';
 import { Token } from './token';
 export declare class Pair {
     readonly liquidityToken: Token;
     private readonly tokenAmounts;
+    readonly swapFee: JSBI;
     static getAddress(tokenA: Token, tokenB: Token): string;
-    constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount);
+    constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount, swapFee?: JSBI);
     /**
      * Returns true if the token is either token0 or token1
      * @param token to check

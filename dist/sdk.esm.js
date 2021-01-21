@@ -41,10 +41,10 @@ var Rounding;
 })(Rounding || (Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName);
-var ORCHESTRATOR_ADDRESS = '0xe42BA6E8Ac3c2Da24AEFC2bb9d056AD2Bc4d5907';
-var FACTORY_ADDRESS = '0x8167211D76890c91c1d67c5Dceda6769b875eC77';
+var ORCHESTRATOR_ADDRESS = '0x0bae0744F6D7C8137fB4D727fdfeE91c1B4eed44';
+var FACTORY_ADDRESS = '0xeF663993b89aD5eDFdF77E2f7b97CD18d2A497e4';
 
-var INIT_CODE_HASH = '0x548f5843b0cbe6ec5a3ca1a7dd1714961b9da55b00a5692f585f5a33a33882a9';
+var INIT_CODE_HASH = '0x1f7a79205b06500dba4319dace4f587f04d4053be84ea23989b8539885ae65e8';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);
@@ -768,12 +768,14 @@ var Price = /*#__PURE__*/function (_Fraction) {
 }(Fraction);
 
 var PAIR_ADDRESS_CACHE = {};
+var BASE_FEE = /*#__PURE__*/JSBI.BigInt(30);
 var Pair = /*#__PURE__*/function () {
-  function Pair(tokenAmountA, tokenAmountB) {
+  function Pair(tokenAmountA, tokenAmountB, swapFee) {
     var tokenAmounts = tokenAmountA.token.sortsBefore(tokenAmountB.token) // does safety checks
     ? [tokenAmountA, tokenAmountB] : [tokenAmountB, tokenAmountA];
     this.liquidityToken = new Token(tokenAmounts[0].token.chainId, Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token), 18, 'MP', 'Materia Pool');
     this.tokenAmounts = tokenAmounts;
+    this.swapFee = swapFee !== null && swapFee !== void 0 ? swapFee : BASE_FEE;
   }
 
   Pair.getAddress = function getAddress(tokenA, tokenB) {
