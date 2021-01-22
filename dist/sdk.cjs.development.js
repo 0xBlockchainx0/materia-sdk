@@ -1532,7 +1532,7 @@ var Router = /*#__PURE__*/function () {
       if (formattedDecimals > 0) {
         typedValueFormatted = Number(units.formatUnits(typedValueParsed, formattedDecimals));
       } else if (formattedDecimals == 0) {
-        typedValueFormatted = Number(units.formatUnits(typedValueParsed, currency.decimals));
+        typedValueFormatted = Number(typedValueParsed);
       } else {
         // EthItem can't unwrap token with more than 18 decimals 
         throw 'Too much decimals for EthItem';

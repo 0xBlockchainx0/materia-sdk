@@ -246,7 +246,7 @@ export abstract class Router {
         typedValueFormatted = Number(formatUnits(typedValueParsed, formattedDecimals))
       }
       else if (formattedDecimals == 0) {
-        typedValueFormatted = Number(formatUnits(typedValueParsed, currency.decimals))
+        typedValueFormatted = Number(typedValueParsed)
       }
       else {
         // EthItem can't unwrap token with more than 18 decimals 
