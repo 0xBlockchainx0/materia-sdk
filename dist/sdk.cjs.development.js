@@ -41,9 +41,8 @@ var _ChainName, _SOLIDITY_TYPE_MAXIMA;
 })(exports.Rounding || (exports.Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[exports.ChainId.MAINNET] = 'mainnet', _ChainName[exports.ChainId.ROPSTEN] = 'ropsten', _ChainName[exports.ChainId.RINKEBY] = 'rinkeby', _ChainName[exports.ChainId.GÖRLI] = 'goerli', _ChainName[exports.ChainId.KOVAN] = 'kovan', _ChainName);
-var ORCHESTRATOR_ADDRESS = '0x0bae0744F6D7C8137fB4D727fdfeE91c1B4eed44';
+var ORCHESTRATOR_ADDRESS = '0x304fe8c33D057581d1ff550c2E7b79Dc697eD286';
 var FACTORY_ADDRESS = '0xeF663993b89aD5eDFdF77E2f7b97CD18d2A497e4';
-
 var INIT_CODE_HASH = '0x1f7a79205b06500dba4319dace4f587f04d4053be84ea23989b8539885ae65e8';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 

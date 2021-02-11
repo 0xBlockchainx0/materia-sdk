@@ -23,12 +23,8 @@ export declare const ChainName: {
     5: string;
     42: string;
 };
-export declare const DEFAULT_CHAIN_ID = ChainId.ROPSTEN;
-export declare const INFURA_PROJECT_KEY = "b038585ef8b84eb7a116e796d9403896";
-export declare const INFURA_ADDRESS: string;
-export declare const ORCHESTRATOR_ADDRESS = "0x0bae0744F6D7C8137fB4D727fdfeE91c1B4eed44";
+export declare const ORCHESTRATOR_ADDRESS = "0x304fe8c33D057581d1ff550c2E7b79Dc697eD286";
 export declare const FACTORY_ADDRESS = "0xeF663993b89aD5eDFdF77E2f7b97CD18d2A497e4";
-export declare const ERC20_WRAPPER_V1_ADDRESS = "0x651A6837457f1f7179a590deC647Ec5D647B8231";
 export declare const INIT_CODE_HASH = "0x1f7a79205b06500dba4319dace4f587f04d4053be84ea23989b8539885ae65e8";
 export declare const MINIMUM_LIQUIDITY: JSBI;
 export declare const ZERO: JSBI;
