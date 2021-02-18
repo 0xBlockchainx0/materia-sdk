@@ -1411,10 +1411,12 @@ var Router = /*#__PURE__*/function () {
     !!(etherIn && etherOut) ?  invariant(false, 'ETHER_IN_OUT')  : void 0;
     !(!('ttl' in options) || options.ttl > 0) ?  invariant(false, 'TTL')  : void 0;
     var to = validateAndParseAddress(options.recipient);
-    var currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(trade.maximumAmountIn(options.allowedSlippage), tokenIn, etherIn);
-    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(trade.minimumAmountOut(options.allowedSlippage), tokenOut, etherOut);
-    var amountIn = toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : trade.maximumAmountIn(options.allowedSlippage));
-    var amountOut = toHex(currencyAmountOut !== null && currencyAmountOut !== void 0 ? currencyAmountOut : trade.minimumAmountOut(options.allowedSlippage));
+    var maximumAmountIn = trade.maximumAmountIn(options.allowedSlippage);
+    var minimumAmountOut = trade.minimumAmountOut(options.allowedSlippage);
+    var currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(maximumAmountIn, tokenIn, etherIn);
+    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut);
+    var amountIn = toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn);
+    var amountOut = toHex(currencyAmountOut !== null && currencyAmountOut !== void 0 ? currencyAmountOut : minimumAmountOut);
     var path = trade.route.path.map(function (token) {
       return token.address;
     });
@@ -1543,8 +1545,6 @@ var Router = /*#__PURE__*/function () {
       // console.log(`Failed to parse input amount: "${value}"`, error)
       return undefined;
     }
-
-    return undefined;
   };
 
   return Router;

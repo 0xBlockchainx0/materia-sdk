@@ -106,12 +106,15 @@ export abstract class Router {
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = validateAndParseAddress(options.recipient)
-    
-    const currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(trade.maximumAmountIn(options.allowedSlippage), tokenIn, etherIn)
-    const currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(trade.minimumAmountOut(options.allowedSlippage), tokenOut, etherOut)
 
-    const amountIn: string = toHex(currencyAmountIn ?? trade.maximumAmountIn(options.allowedSlippage))
-    const amountOut: string = toHex(currencyAmountOut ?? trade.minimumAmountOut(options.allowedSlippage))
+    const maximumAmountIn = trade.maximumAmountIn(options.allowedSlippage)
+    const minimumAmountOut = trade.minimumAmountOut(options.allowedSlippage)
+    
+    const currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(maximumAmountIn, tokenIn, etherIn)
+    const currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut)
+
+    const amountIn: string = toHex(currencyAmountIn ?? maximumAmountIn)
+    const amountOut: string = toHex(currencyAmountOut ?? minimumAmountOut)
     
     let path: string[] = trade.route.path.map(token => token.address)
 
@@ -261,6 +264,5 @@ export abstract class Router {
       // console.log(`Failed to parse input amount: "${value}"`, error)
       return undefined
     }
-    return undefined
   }
 }
