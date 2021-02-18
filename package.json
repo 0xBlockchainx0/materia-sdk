@@ -1,7 +1,7 @@
 {
   "name": "@materia-dex/sdk",
   "license": "MIT",
-  "version": "1.5.1",
+  "version": "1.5.4",
   "description": "An SDK for building applications on top of Materia.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

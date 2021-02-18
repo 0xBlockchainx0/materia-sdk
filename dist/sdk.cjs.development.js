@@ -1531,7 +1531,7 @@ var Router = /*#__PURE__*/function () {
       var typedValueFormatted = Number(0);
 
       if (formattedDecimals > 0) {
-        typedValueFormatted = Number(units.formatUnits(typedValueParsed, formattedDecimals));
+        typedValueFormatted = Math.trunc(Number(units.formatUnits(typedValueParsed, formattedDecimals)));
       } else if (formattedDecimals == 0) {
         typedValueFormatted = Number(typedValueParsed);
       } else {
@@ -1542,7 +1542,7 @@ var Router = /*#__PURE__*/function () {
       return erc20Currency instanceof Token ? new TokenAmount(erc20Currency, JSBI.BigInt(typedValueFormatted)) : CurrencyAmount.ether(JSBI.BigInt(typedValueFormatted));
     } catch (error) {
       // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
-      // console.log(`Failed to parse input amount: "${value}"`, error)
+      console.log("Failed to parse input amount: \"" + value + "\"", error);
       return undefined;
     }
   };

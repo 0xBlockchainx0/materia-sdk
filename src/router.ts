@@ -246,7 +246,7 @@ export abstract class Router {
       let typedValueFormatted: Number = Number(0)
   
       if (formattedDecimals > 0) {
-        typedValueFormatted = Number(formatUnits(typedValueParsed, formattedDecimals))
+        typedValueFormatted = Math.trunc(Number(formatUnits(typedValueParsed, formattedDecimals)))
       }
       else if (formattedDecimals == 0) {
         typedValueFormatted = Number(typedValueParsed)
@@ -261,7 +261,7 @@ export abstract class Router {
         : CurrencyAmount.ether(JSBI.BigInt(typedValueFormatted))
     } catch (error) {
       // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
-      // console.log(`Failed to parse input amount: "${value}"`, error)
+      console.log(`Failed to parse input amount: "${value}"`, error)
       return undefined
     }
   }
