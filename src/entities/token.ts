@@ -57,8 +57,8 @@ export function currencyEquals(currencyA: Currency, currencyB: Currency): boolea
 }
 
 export const IETH = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xAa843dd5fa4F9f07E2De5920dBf73D9a875C9e10', 18, 'IETH', 'EthereumItem'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, '0x0C0488a2e3f5FdEb482Bf5A76AB1ef27A3658101', 18, 'IETH', 'EthereumItem'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x1D6316dbbE18b6E9B75AE064aA114FE7dC208eDC', 18, 'IETH', 'EthereumItem'),
+  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, '0xEDf7dE64832b6D0998fE7E7D556A38005B994565', 18, 'IETH', 'EthereumItem'),
   [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'),
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'),
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem')

@@ -41,9 +41,9 @@ var Rounding;
 })(Rounding || (Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName);
-var ORCHESTRATOR_ADDRESS = '0x2a93E9d981d0456A21B02AfDC84bA38679d43DF1';
-var FACTORY_ADDRESS = '0xeF663993b89aD5eDFdF77E2f7b97CD18d2A497e4';
-var INIT_CODE_HASH = '0x1f7a79205b06500dba4319dace4f587f04d4053be84ea23989b8539885ae65e8';
+var FACTORY_ADDRESS = '0xDD9242846aE11Ae6E57170B840cc174a7b9e2f48';
+var ORCHESTRATOR_ADDRESS = '0x81B0f3c1B363a44b9c03F868e9B8460c23ce5d1c';
+var INIT_CODE_HASH = '0x3a1b8c90f0ece2019085f38a482fb7538bb84471f01b56464ac88dd6bece344e';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);
@@ -448,7 +448,7 @@ function currencyEquals(currencyA, currencyB) {
     return currencyA === currencyB;
   }
 }
-var IETH = (_IETH = {}, _IETH[ChainId.MAINNET] = /*#__PURE__*/new Token(ChainId.MAINNET, '0xAa843dd5fa4F9f07E2De5920dBf73D9a875C9e10', 18, 'IETH', 'EthereumItem'), _IETH[ChainId.ROPSTEN] = /*#__PURE__*/new Token(ChainId.ROPSTEN, '0x0C0488a2e3f5FdEb482Bf5A76AB1ef27A3658101', 18, 'IETH', 'EthereumItem'), _IETH[ChainId.RINKEBY] = /*#__PURE__*/new Token(ChainId.RINKEBY, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH[ChainId.GÖRLI] = /*#__PURE__*/new Token(ChainId.GÖRLI, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH[ChainId.KOVAN] = /*#__PURE__*/new Token(ChainId.KOVAN, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH);
+var IETH = (_IETH = {}, _IETH[ChainId.MAINNET] = /*#__PURE__*/new Token(ChainId.MAINNET, '0x1D6316dbbE18b6E9B75AE064aA114FE7dC208eDC', 18, 'IETH', 'EthereumItem'), _IETH[ChainId.ROPSTEN] = /*#__PURE__*/new Token(ChainId.ROPSTEN, '0xEDf7dE64832b6D0998fE7E7D556A38005B994565', 18, 'IETH', 'EthereumItem'), _IETH[ChainId.RINKEBY] = /*#__PURE__*/new Token(ChainId.RINKEBY, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH[ChainId.GÖRLI] = /*#__PURE__*/new Token(ChainId.GÖRLI, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH[ChainId.KOVAN] = /*#__PURE__*/new Token(ChainId.KOVAN, ZERO_ADDRESS, 18, 'IETH', 'EthereumItem'), _IETH);
 
 var _toSignificantRoundin, _toFixedRounding;
 var Decimal = /*#__PURE__*/toFormat(_Decimal);
