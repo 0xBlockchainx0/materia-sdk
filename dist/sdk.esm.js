@@ -41,8 +41,8 @@ var Rounding;
 })(Rounding || (Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName);
-var FACTORY_ADDRESS = '0x87ECe4fA34927851241DB2D6C73fC249F1f89f13';
-var ORCHESTRATOR_ADDRESS = '0xc94150F4069414526dEee95236bA0109DC97bBFf';
+var FACTORY_ADDRESS = '0xB498a69fF7b9a73C58491d564Fc6a462b259c860';
+var ORCHESTRATOR_ADDRESS = '0xB0F720Baa5BD1715897d4790A59f5c7aa1377D79';
 var INIT_CODE_HASH = '0x1974917c1e01e6369c1b45f631eae6a71d24cb5108c460cc7f0b1c608b3a7c94';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
