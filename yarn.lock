@@ -1556,17 +1556,17 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@materia-dex/materia-contracts-core@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-core/-/materia-contracts-core-1.1.4.tgz#b22da09d8a1bc65cb61d72365e9fc70c3bc22830"
-  integrity sha512-J/IpVH7gVWzfriOhxK7vpNsph7J/67grMo9IpxwjNd/EXJdLlAyZz0mS+jDFSz7/ffzgEa2OLNSS9jQeMx47OQ==
+"@materia-dex/materia-contracts-core@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-core/-/materia-contracts-core-1.1.5.tgz#a4e0670b4e6ebf8afd581229c0cdab35ecca2fb0"
+  integrity sha512-QhX0AzgLoDDo+91YetqPv/Q10/Uo2Jdp543jQeHPNcN3bN6lBRfDUYfHEZVtmRhD/gUupAdIJk/GZXROF8c9cw==
 
-"@materia-dex/materia-contracts-proxy@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-proxy/-/materia-contracts-proxy-1.1.6.tgz#887d330b350ddb6417ee65d2d2738a8e0f0d0150"
-  integrity sha512-+b9rU3qctsHqMtaKpnRCA0HDYbMO7xOaQMe3S/mqsDX2xMAn058t3TSnCQHo2bTcqKzcyyM6sQKrevmg3EbQOw==
+"@materia-dex/materia-contracts-proxy@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@materia-dex/materia-contracts-proxy/-/materia-contracts-proxy-1.1.7.tgz#07e57f547b8eaf633c54b7ea1a919b47ccc8b8b7"
+  integrity sha512-L9t12gBpHZWeTEL4r9ysogIok2u6/kcZUv42zURV359+6wHx+pG9Cy2R/Ke3JpZVLpuwY/cRkKiZOcnp8fjktQ==
   dependencies:
-    "@materia-dex/materia-contracts-core" "^1.1.4"
+    "@materia-dex/materia-contracts-core" "^1.1.5"
     "@openzeppelin/contracts" "^3.2.0"
     abstract-leveldown "^5.0.0"
     accepts "^1.3.7"

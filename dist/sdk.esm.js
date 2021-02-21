@@ -41,9 +41,9 @@ var Rounding;
 })(Rounding || (Rounding = {}));
 
 var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName);
-var FACTORY_ADDRESS = '0xBC3AdaD2908cC3556DCE07547AEE76651Ac3d5AE';
-var ORCHESTRATOR_ADDRESS = '0xd8076B5913934f6Cc8A223c27FD7949c4Ca64A55';
-var INIT_CODE_HASH = '0x3a1b8c90f0ece2019085f38a482fb7538bb84471f01b56464ac88dd6bece344e';
+var FACTORY_ADDRESS = '0x87ECe4fA34927851241DB2D6C73fC249F1f89f13';
+var ORCHESTRATOR_ADDRESS = '0xc94150F4069414526dEee95236bA0109DC97bBFf';
+var INIT_CODE_HASH = '0x1974917c1e01e6369c1b45f631eae6a71d24cb5108c460cc7f0b1c608b3a7c94';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);

@@ -23,9 +23,9 @@ export declare const ChainName: {
     5: string;
     42: string;
 };
-export declare const FACTORY_ADDRESS = "0xBC3AdaD2908cC3556DCE07547AEE76651Ac3d5AE";
-export declare const ORCHESTRATOR_ADDRESS = "0xd8076B5913934f6Cc8A223c27FD7949c4Ca64A55";
-export declare const INIT_CODE_HASH = "0x3a1b8c90f0ece2019085f38a482fb7538bb84471f01b56464ac88dd6bece344e";
+export declare const FACTORY_ADDRESS = "0x87ECe4fA34927851241DB2D6C73fC249F1f89f13";
+export declare const ORCHESTRATOR_ADDRESS = "0xc94150F4069414526dEee95236bA0109DC97bBFf";
+export declare const INIT_CODE_HASH = "0x1974917c1e01e6369c1b45f631eae6a71d24cb5108c460cc7f0b1c608b3a7c94";
 export declare const MINIMUM_LIQUIDITY: JSBI;
 export declare const ZERO: JSBI;
 export declare const ONE: JSBI;
