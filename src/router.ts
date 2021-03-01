@@ -243,13 +243,13 @@ export abstract class Router {
       const formattedDecimals = currency.decimals - erc20Currency.decimals
       const typedValueParsed = parseUnits(value, currency.decimals).toString()
       
-      let typedValueFormatted: Number = Number(0)
+      let typedValueFormatted: JSBI = JSBI.BigInt(0)
   
       if (formattedDecimals > 0) {
-        typedValueFormatted = Math.trunc(Number(formatUnits(typedValueParsed, formattedDecimals)))
+        typedValueFormatted = JSBI.BigInt(Math.trunc(Number(formatUnits(typedValueParsed, formattedDecimals))))
       }
       else if (formattedDecimals == 0) {
-        typedValueFormatted = Number(typedValueParsed)
+        typedValueFormatted = JSBI.BigInt(typedValueParsed)
       }
       else {
         // EthItem can't unwrap token with more than 18 decimals 

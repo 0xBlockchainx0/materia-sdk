@@ -1528,12 +1528,12 @@ var Router = /*#__PURE__*/function () {
     try {
       var formattedDecimals = currency.decimals - erc20Currency.decimals;
       var typedValueParsed = parseUnits(value, currency.decimals).toString();
-      var typedValueFormatted = Number(0);
+      var typedValueFormatted = JSBI.BigInt(0);
 
       if (formattedDecimals > 0) {
-        typedValueFormatted = Math.trunc(Number(formatUnits(typedValueParsed, formattedDecimals)));
+        typedValueFormatted = JSBI.BigInt(Math.trunc(Number(formatUnits(typedValueParsed, formattedDecimals))));
       } else if (formattedDecimals == 0) {
-        typedValueFormatted = Number(typedValueParsed);
+        typedValueFormatted = JSBI.BigInt(typedValueParsed);
       } else {
         // EthItem can't unwrap token with more than 18 decimals 
         throw 'Too much decimals for EthItem';
