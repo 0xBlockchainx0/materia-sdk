@@ -68,6 +68,14 @@ function toHex(currencyAmount: CurrencyAmount) {
   return `0x${currencyAmount.raw.toString(16)}`
 }
 
+function toHexJSBI(amount: JSBI) {
+  return `0x${amount.toString(16)}`
+}
+
+function fromHex(amount: string) {
+  return JSBI.BigInt(amount)
+}
+
 const ZERO_HEX = '0x0'
 
 /**
@@ -208,14 +216,16 @@ export abstract class Router {
             args = [amountOut, path, to, deadline]
             value = amountIn
           } else if (etherOut) {
+            const adjustedAmountIn = Router.adjustTokenAmount(amountIn, tokenIn)
             methodName = 'swapTokensForExactETH'
             // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
-            args = [amountOut, amountIn, path, to, deadline]
+            args = [amountOut, adjustedAmountIn ?? amountIn, path, to, deadline]
             value = ZERO_HEX
           } else {
+            const adjustedAmountIn = Router.adjustTokenAmount(amountIn, tokenIn)
             methodName = 'swapTokensForExactTokens'
             // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
-            args = [amountOut, amountIn, path, to, deadline]
+            args = [amountOut, adjustedAmountIn ?? amountIn, path, to, deadline]
             value = ZERO_HEX
           }
           break
@@ -226,6 +236,33 @@ export abstract class Router {
       methodName,
       args,
       value
+    }
+  }
+
+  private static adjustTokenAmount(hexAmount: string, erc20Currency: Currency): string | undefined {
+    if (!hexAmount || !erc20Currency) {
+      return undefined
+    }
+
+    try {
+      if (erc20Currency.decimals < 18) {
+        // Adjust token amount for tokens with less than 18 decimals rounding by adding granularity of 1 uint
+        const amount: JSBI = JSBI.add(fromHex(hexAmount), JSBI.BigInt(1))
+        const adjustedAmount = toHexJSBI(amount)
+
+        return adjustedAmount
+      }
+      else if (erc20Currency.decimals == 18) {
+        return hexAmount
+      }
+      else {
+        // EthItem can't unwrap token with more than 18 decimals 
+        throw 'Too much decimals for EthItem'
+      }
+    }
+    catch(error){
+      console.log(`Failed to adjust input amount: "${hexAmount}"`, error)
+      return undefined
     }
   }
 

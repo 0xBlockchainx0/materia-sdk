@@ -66,5 +66,6 @@ export declare abstract class Router {
      * @param objectId objectId for the EthItem
      */
     static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, tokenIn: Token, tokenOut: Token, etherIn: Boolean, etherOut: Boolean, isEthItem: boolean, objectId: string | null): SwapParameters;
+    private static adjustTokenAmount;
     private static decodeInteroperableValueToERC20TokenAmount;
 }

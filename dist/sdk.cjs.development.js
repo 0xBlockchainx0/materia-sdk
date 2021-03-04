@@ -1382,6 +1382,14 @@ function toHex(currencyAmount) {
   return "0x" + currencyAmount.raw.toString(16);
 }
 
+function toHexJSBI(amount) {
+  return "0x" + amount.toString(16);
+}
+
+function fromHex(amount) {
+  return JSBI.BigInt(amount);
+}
+
 var ZERO_HEX = '0x0';
 /**
  * Represents the Materia Router, and has static methods for helping execute trades.
@@ -1491,14 +1499,17 @@ var Router = /*#__PURE__*/function () {
             args = [amountOut, path, to, deadline];
             value = amountIn;
           } else if (etherOut) {
+            var adjustedAmountIn = Router.adjustTokenAmount(amountIn, tokenIn);
             methodName = 'swapTokensForExactETH'; // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
 
-            args = [amountOut, amountIn, path, to, deadline];
+            args = [amountOut, adjustedAmountIn !== null && adjustedAmountIn !== void 0 ? adjustedAmountIn : amountIn, path, to, deadline];
             value = ZERO_HEX;
           } else {
+            var _adjustedAmountIn = Router.adjustTokenAmount(amountIn, tokenIn);
+
             methodName = 'swapTokensForExactTokens'; // (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline)
 
-            args = [amountOut, amountIn, path, to, deadline];
+            args = [amountOut, _adjustedAmountIn !== null && _adjustedAmountIn !== void 0 ? _adjustedAmountIn : amountIn, path, to, deadline];
             value = ZERO_HEX;
           }
 
@@ -1511,6 +1522,29 @@ var Router = /*#__PURE__*/function () {
       args: args,
       value: value
     };
+  };
+
+  Router.adjustTokenAmount = function adjustTokenAmount(hexAmount, erc20Currency) {
+    if (!hexAmount || !erc20Currency) {
+      return undefined;
+    }
+
+    try {
+      if (erc20Currency.decimals < 18) {
+        // Adjust token amount for tokens with less than 18 decimals rounding by adding granularity of 1 uint
+        var amount = JSBI.add(fromHex(hexAmount), JSBI.BigInt(1));
+        var adjustedAmount = toHexJSBI(amount);
+        return adjustedAmount;
+      } else if (erc20Currency.decimals == 18) {
+        return hexAmount;
+      } else {
+        // EthItem can't unwrap token with more than 18 decimals 
+        throw 'Too much decimals for EthItem';
+      }
+    } catch (error) {
+      console.log("Failed to adjust input amount: \"" + hexAmount + "\"", error);
+      return undefined;
+    }
   };
 
   Router.decodeInteroperableValueToERC20TokenAmount = function decodeInteroperableValueToERC20TokenAmount(currencyAmount, erc20Currency, isETH) {
