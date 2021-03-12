@@ -277,16 +277,15 @@ export abstract class Router {
       return undefined
     }
     try {
-      const formattedDecimals = currency.decimals - erc20Currency.decimals
-      const typedValueParsed = parseUnits(value, currency.decimals).toString()
-      
+      const deltaDecimals = currency.decimals - erc20Currency.decimals
+
       let typedValueFormatted: JSBI = JSBI.BigInt(0)
   
-      if (formattedDecimals > 0) {
-        typedValueFormatted = JSBI.BigInt(Math.trunc(Number(formatUnits(typedValueParsed, formattedDecimals))))
+      if (deltaDecimals > 0) {
+        typedValueFormatted = JSBI.BigInt(parseUnits(value, erc20Currency.decimals))
       }
-      else if (formattedDecimals == 0) {
-        typedValueFormatted = JSBI.BigInt(typedValueParsed)
+      else if (deltaDecimals == 0) {
+        typedValueFormatted = JSBI.BigInt(parseUnits(value, currency.decimals))
       }
       else {
         // EthItem can't unwrap token with more than 18 decimals 
@@ -294,8 +293,8 @@ export abstract class Router {
       }
       
       return erc20Currency instanceof Token
-        ? new TokenAmount(erc20Currency, JSBI.BigInt(typedValueFormatted))
-        : CurrencyAmount.ether(JSBI.BigInt(typedValueFormatted))
+        ? new TokenAmount(erc20Currency, typedValueFormatted)
+        : CurrencyAmount.ether(typedValueFormatted)
     } catch (error) {
       // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
       console.log(`Failed to parse input amount: "${value}"`, error)
