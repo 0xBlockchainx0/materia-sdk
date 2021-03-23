@@ -61,11 +61,14 @@ export declare abstract class Router {
      * @param tokenIn input token address
      * @param tokenOut output token address
      * @param etherIn input currency is ETH
-    *  @param etherOut output currency is ETH
+     * @param etherOut output currency is ETH
      * @param isEthItem flag for check if is EthItem
+     * @param isNativeItem flag for check if is a native EthItem
      * @param objectId objectId for the EthItem
+     * @param nativeDecimals decimals is the token is native EthItem
      */
-    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, tokenIn: Token, tokenOut: Token, etherIn: Boolean, etherOut: Boolean, isEthItem: boolean, objectId: string | null): SwapParameters;
+    static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline, tokenIn: Token, tokenOut: Token, etherIn: Boolean, etherOut: Boolean, isEthItem: boolean, isNativeItem: boolean, objectId: string | null, nativeDecimals: number | null): SwapParameters;
     private static adjustTokenAmount;
     private static decodeInteroperableValueToERC20TokenAmount;
+    private static formatNativeTokenValue;
 }

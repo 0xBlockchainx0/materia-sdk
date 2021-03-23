@@ -40,9 +40,11 @@ var Rounding;
   Rounding[Rounding["ROUND_UP"] = 2] = "ROUND_UP";
 })(Rounding || (Rounding = {}));
 
-var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName);
-var FACTORY_ADDRESS = '0xB498a69fF7b9a73C58491d564Fc6a462b259c860';
-var ORCHESTRATOR_ADDRESS = '0xB0F720Baa5BD1715897d4790A59f5c7aa1377D79';
+var ChainName = (_ChainName = {}, _ChainName[ChainId.MAINNET] = 'mainnet', _ChainName[ChainId.ROPSTEN] = 'ropsten', _ChainName[ChainId.RINKEBY] = 'rinkeby', _ChainName[ChainId.GÖRLI] = 'goerli', _ChainName[ChainId.KOVAN] = 'kovan', _ChainName); // export const FACTORY_ADDRESS = '0xB498a69fF7b9a73C58491d564Fc6a462b259c860'
+// export const ORCHESTRATOR_ADDRESS = '0xB0F720Baa5BD1715897d4790A59f5c7aa1377D79'
+
+var FACTORY_ADDRESS = '0x0842c3E3ff99AEb1984A356dCd4b8c1812C82189';
+var ORCHESTRATOR_ADDRESS = '0x7e9E11a1e28aF8F7F0d7c730290e6A2913C13068';
 var INIT_CODE_HASH = '0x1974917c1e01e6369c1b45f631eae6a71d24cb5108c460cc7f0b1c608b3a7c94';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
@@ -1407,13 +1409,15 @@ var Router = /*#__PURE__*/function () {
    * @param tokenIn input token address
    * @param tokenOut output token address
    * @param etherIn input currency is ETH
-  *  @param etherOut output currency is ETH
+   * @param etherOut output currency is ETH
    * @param isEthItem flag for check if is EthItem
+   * @param isNativeItem flag for check if is a native EthItem
    * @param objectId objectId for the EthItem
+   * @param nativeDecimals decimals is the token is native EthItem
    */
 
 
-  Router.swapCallParameters = function swapCallParameters(trade, options, tokenIn, tokenOut, etherIn, etherOut, isEthItem, objectId) {
+  Router.swapCallParameters = function swapCallParameters(trade, options, tokenIn, tokenOut, etherIn, etherOut, isEthItem, isNativeItem, objectId, nativeDecimals) {
     var web3 = new Web3(); // the router does not support both ether in and out
 
     !!(etherIn && etherOut) ? process.env.NODE_ENV !== "production" ? invariant(false, 'ETHER_IN_OUT') : invariant(false) : void 0;
@@ -1422,8 +1426,10 @@ var Router = /*#__PURE__*/function () {
     var maximumAmountIn = trade.maximumAmountIn(options.allowedSlippage);
     var minimumAmountOut = trade.minimumAmountOut(options.allowedSlippage);
     var currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(maximumAmountIn, tokenIn, etherIn);
-    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut);
-    var amountIn = toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn);
+    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut); // Native EthItem 1155 decimals fix
+
+    var adjustedNativeAmountIn = isEthItem && isNativeItem && nativeDecimals == 0 ? Router.formatNativeTokenValue(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn, nativeDecimals !== null && nativeDecimals !== void 0 ? nativeDecimals : undefined) : undefined;
+    var amountIn = (adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.value) && !(adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.error) ? toHexJSBI(adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.value) : !(adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.error) ? toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn) : '';
     var amountOut = toHex(currencyAmountOut !== null && currencyAmountOut !== void 0 ? currencyAmountOut : minimumAmountOut);
     var path = trade.route.path.map(function (token) {
       return token.address;
@@ -1577,6 +1583,34 @@ var Router = /*#__PURE__*/function () {
       // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
       console.log("Failed to parse input amount: \"" + value + "\"", error);
       return undefined;
+    }
+  };
+
+  Router.formatNativeTokenValue = function formatNativeTokenValue(currencyAmount, decimals) {
+    if (!currencyAmount || decimals === null || decimals === undefined || decimals >= 18) {
+      return {
+        value: undefined,
+        error: false
+      };
+    }
+
+    var value = currencyAmount.toExact();
+
+    try {
+      var nativeValue = JSBI.BigInt(parseUnits(value, decimals));
+      return {
+        value: nativeValue,
+        error: false
+      };
+    } catch (error) {
+      var _currencyAmount$curre;
+
+      // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
+      console.log("Token " + (currencyAmount === null || currencyAmount === void 0 ? void 0 : (_currencyAmount$curre = currencyAmount.currency) === null || _currencyAmount$curre === void 0 ? void 0 : _currencyAmount$curre.symbol) + " has too much decimals!");
+      return {
+        value: undefined,
+        error: true
+      };
     }
   };
 
