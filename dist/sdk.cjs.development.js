@@ -44,7 +44,7 @@ var ChainName = (_ChainName = {}, _ChainName[exports.ChainId.MAINNET] = 'mainnet
 // export const ORCHESTRATOR_ADDRESS = '0xB0F720Baa5BD1715897d4790A59f5c7aa1377D79'
 
 var FACTORY_ADDRESS = '0x0842c3E3ff99AEb1984A356dCd4b8c1812C82189';
-var ORCHESTRATOR_ADDRESS = '0x7e9E11a1e28aF8F7F0d7c730290e6A2913C13068';
+var ORCHESTRATOR_ADDRESS = '0x42e9287558dDD75890e0f26dDb844a2b2FfE88F8';
 var INIT_CODE_HASH = '0x1974917c1e01e6369c1b45f631eae6a71d24cb5108c460cc7f0b1c608b3a7c94';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
@@ -1411,13 +1411,13 @@ var Router = /*#__PURE__*/function () {
    * @param etherIn input currency is ETH
    * @param etherOut output currency is ETH
    * @param isEthItem flag for check if is EthItem
-   * @param isNativeItem flag for check if is a native EthItem
+   * @param needEthItemDecimalsAdjustment flag for check if the value need EthItem (Native/Wrapped 721/Wrapped 1155) decimals adjustment
    * @param objectId objectId for the EthItem
-   * @param nativeDecimals decimals is the token is native EthItem
+   * @param ethItemDecimals decimals if the token need EthItem decimals adjustment
    */
 
 
-  Router.swapCallParameters = function swapCallParameters(trade, options, tokenIn, tokenOut, etherIn, etherOut, isEthItem, isNativeItem, objectId, nativeDecimals) {
+  Router.swapCallParameters = function swapCallParameters(trade, options, tokenIn, tokenOut, etherIn, etherOut, isEthItem, needEthItemDecimalsAdjustment, objectId, ethItemDecimals) {
     var web3 = new Web3(); // the router does not support both ether in and out
 
     !!(etherIn && etherOut) ?  invariant(false, 'ETHER_IN_OUT')  : void 0;
@@ -1426,10 +1426,10 @@ var Router = /*#__PURE__*/function () {
     var maximumAmountIn = trade.maximumAmountIn(options.allowedSlippage);
     var minimumAmountOut = trade.minimumAmountOut(options.allowedSlippage);
     var currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(maximumAmountIn, tokenIn, etherIn);
-    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut); // Native EthItem 1155 decimals fix
+    var currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut); // Native/Wrapped 721/Wrapped 1155 decimals fix
 
-    var adjustedNativeAmountIn = isEthItem && isNativeItem && nativeDecimals == 0 ? Router.formatNativeTokenValue(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn, nativeDecimals !== null && nativeDecimals !== void 0 ? nativeDecimals : undefined) : undefined;
-    var amountIn = (adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.value) && !(adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.error) ? toHexJSBI(adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.value) : !(adjustedNativeAmountIn === null || adjustedNativeAmountIn === void 0 ? void 0 : adjustedNativeAmountIn.error) ? toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn) : '';
+    var adjustedEthItemAmountIn = isEthItem && needEthItemDecimalsAdjustment && ethItemDecimals == 0 ? Router.formatEthItemTokenValue(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn, ethItemDecimals !== null && ethItemDecimals !== void 0 ? ethItemDecimals : undefined) : undefined;
+    var amountIn = (adjustedEthItemAmountIn === null || adjustedEthItemAmountIn === void 0 ? void 0 : adjustedEthItemAmountIn.value) && !(adjustedEthItemAmountIn === null || adjustedEthItemAmountIn === void 0 ? void 0 : adjustedEthItemAmountIn.error) ? toHexJSBI(adjustedEthItemAmountIn === null || adjustedEthItemAmountIn === void 0 ? void 0 : adjustedEthItemAmountIn.value) : !(adjustedEthItemAmountIn === null || adjustedEthItemAmountIn === void 0 ? void 0 : adjustedEthItemAmountIn.error) ? toHex(currencyAmountIn !== null && currencyAmountIn !== void 0 ? currencyAmountIn : maximumAmountIn) : '';
     var amountOut = toHex(currencyAmountOut !== null && currencyAmountOut !== void 0 ? currencyAmountOut : minimumAmountOut);
     var path = trade.route.path.map(function (token) {
       return token.address;
@@ -1586,7 +1586,7 @@ var Router = /*#__PURE__*/function () {
     }
   };
 
-  Router.formatNativeTokenValue = function formatNativeTokenValue(currencyAmount, decimals) {
+  Router.formatEthItemTokenValue = function formatEthItemTokenValue(currencyAmount, decimals) {
     if (!currencyAmount || decimals === null || decimals === undefined || decimals >= 18) {
       return {
         value: undefined,

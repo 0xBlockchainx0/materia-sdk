@@ -95,9 +95,9 @@ export abstract class Router {
    * @param etherIn input currency is ETH
    * @param etherOut output currency is ETH
    * @param isEthItem flag for check if is EthItem
-   * @param isNativeItem flag for check if is a native EthItem
+   * @param needEthItemDecimalsAdjustment flag for check if the value need EthItem (Native/Wrapped 721/Wrapped 1155) decimals adjustment
    * @param objectId objectId for the EthItem
-   * @param nativeDecimals decimals is the token is native EthItem
+   * @param ethItemDecimals decimals if the token need EthItem decimals adjustment
    */
   public static swapCallParameters(
     trade: Trade,
@@ -107,9 +107,9 @@ export abstract class Router {
     etherIn: Boolean,
     etherOut: Boolean,
     isEthItem: boolean,
-    isNativeItem: boolean,
+    needEthItemDecimalsAdjustment: boolean,
     objectId: string | null,
-    nativeDecimals: number | null,
+    ethItemDecimals: number | null,
   ): SwapParameters {
     const web3 = new Web3();
 
@@ -125,17 +125,17 @@ export abstract class Router {
     const currencyAmountIn = Router.decodeInteroperableValueToERC20TokenAmount(maximumAmountIn, tokenIn, etherIn)
     const currencyAmountOut = Router.decodeInteroperableValueToERC20TokenAmount(minimumAmountOut, tokenOut, etherOut)
 
-    // Native EthItem 1155 decimals fix
-    const adjustedNativeAmountIn = isEthItem && isNativeItem && nativeDecimals == 0 ?
-      Router.formatNativeTokenValue(
+    // Native/Wrapped 721/Wrapped 1155 decimals fix
+    const adjustedEthItemAmountIn = isEthItem && needEthItemDecimalsAdjustment && ethItemDecimals == 0 ?
+      Router.formatEthItemTokenValue(
         currencyAmountIn ?? maximumAmountIn,
-        nativeDecimals ?? undefined
+        ethItemDecimals ?? undefined
       ) : undefined
 
     const amountIn: string =
-      adjustedNativeAmountIn?.value && !adjustedNativeAmountIn?.error
-        ? toHexJSBI(adjustedNativeAmountIn?.value)
-        : !adjustedNativeAmountIn?.error
+      adjustedEthItemAmountIn?.value && !adjustedEthItemAmountIn?.error
+        ? toHexJSBI(adjustedEthItemAmountIn?.value)
+        : !adjustedEthItemAmountIn?.error
           ? toHex(currencyAmountIn ?? maximumAmountIn)
           : ''
 
@@ -319,7 +319,7 @@ export abstract class Router {
     }
   }
 
-  private static formatNativeTokenValue(currencyAmount?: CurrencyAmount, decimals?: number): { value: JSBI | undefined, error: boolean } {
+  private static formatEthItemTokenValue(currencyAmount?: CurrencyAmount, decimals?: number): { value: JSBI | undefined, error: boolean } {
     if (!currencyAmount || decimals === null || decimals === undefined || decimals >= 18) {
       return { value: undefined, error: false }
     }

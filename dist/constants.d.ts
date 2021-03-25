@@ -24,7 +24,7 @@ export declare const ChainName: {
     42: string;
 };
 export declare const FACTORY_ADDRESS = "0x0842c3E3ff99AEb1984A356dCd4b8c1812C82189";
-export declare const ORCHESTRATOR_ADDRESS = "0x7e9E11a1e28aF8F7F0d7c730290e6A2913C13068";
+export declare const ORCHESTRATOR_ADDRESS = "0x42e9287558dDD75890e0f26dDb844a2b2FfE88F8";
 export declare const INIT_CODE_HASH = "0x1974917c1e01e6369c1b45f631eae6a71d24cb5108c460cc7f0b1c608b3a7c94";
 export declare const MINIMUM_LIQUIDITY: JSBI;
 export declare const ZERO: JSBI;
